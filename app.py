@@ -4,6 +4,7 @@ from flask import redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 import db
 import config
+import items
 
 
 app = Flask(__name__)
@@ -25,9 +26,7 @@ def create_item():
     dance_style_id = request.form["dance_style"]
     user_id = session["user_id"]
 
-    sql = """INSERT INTO items (title, description, dance_style_id, user_id)
-             VALUES (?, ?, ?, ?)"""
-    db.execute(sql, [title, description, dance_style_id, user_id])
+    items.add_item(title, description, dance_style_id, user_id)
 
     return redirect("/")
 
@@ -82,4 +81,3 @@ def logout():
     del session["user_id"]
     del session["username"]
     return redirect("/")
-
