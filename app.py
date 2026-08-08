@@ -1,10 +1,10 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import redirect, abort, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 import db
 import config
-import items
+import projects
 
 
 app = Flask(__name__)
@@ -12,74 +12,79 @@ app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    all_items = items.get_items()
-    return render_template("index.html", items=all_items)
+    all_projects = projects.get_projects()
+    return render_template("index.html", projects=all_projects)
 
-@app.route("/find_item")
-def find_item():
+@app.route("/find_project")
+def find_project():
     query = request.args.get("query")
     if query:
-        results = items.find_items(query)
+        results = projects.find_projects(query)
     else:
         query = ""
         results = []
-    return render_template("find_item.html", query=query, results=results)
+    return render_template("find_project.html", query=query, results=results)
 
-@app.route("/item/<int:item_id>")
-def show_item(item_id):
-    item = items.get_item(item_id)
-    return render_template("show_item.html", item=item)
+@app.route("/project/<int:project_id>")
+def show_project(project_id):
+    project = projects.get_project(project_id)
+    return render_template("show_project.html", project=project)
 
-@app.route("/new_item")
-def new_item():
+@app.route("/new_project")
+def new_project():
     dance_styles = db.query("SELECT * FROM dance_styles")
-    return render_template("new_item.html", dance_styles=dance_styles)
+    return render_template("new_project.html", dance_styles=dance_styles)
 
-@app.route("/create_item", methods=["POST"])
-def create_item():
+@app.route("/create_project", methods=["POST"])
+def create_project():
     title = request.form["title"]
     description = request.form["description"]
     dance_style_id = request.form["dance_style"]
     user_id = session["user_id"]
 
-    items.add_item(title, description, dance_style_id, user_id)
+    projects.add_project(title, description, dance_style_id, user_id)
 
     return redirect("/")
 
-@app.route("/edit_item/<int:item_id>")
-def edit_item(item_id):
-    item = items.get_item(item_id)
+@app.route("/edit_project/<int:project_id>")
+def edit_project(project_id):
+    project = projects.get_project(project_id)
     dance_styles = db.query("SELECT * FROM dance_styles")
-    return render_template("edit_item.html", item=item, dance_styles=dance_styles)
+    return render_template("edit_project.html", project=project, dance_styles=dance_styles)
 
-@app.route("/update_item", methods=["POST"])
-def update_item():
-    item_id = request.form["item_id"]
+@app.route("/update_project", methods=["POST"])
+def update_project():
+    project_id = request.form["project_id"]
     title = request.form["title"]
     description = request.form["description"]
     dance_style_id = request.form["dance_style"]
 
-    items.update_item(item_id, title, description, dance_style_id)
+    projects.update_project(project_id, title, description, dance_style_id)
 
-    return redirect("/item/" + str(item_id))
+    return redirect("/project/" + str(project_id))
 
-@app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
-def remove_item(item_id):
+@app.route("/remove_project/<int:project_id>", methods=["GET", "POST"])
+def remove_project(project_id):
     if request.method == "GET":
-        item = items.get_item(item_id)
-        return render_template("remove_item.html", item=item)
+        project = projects.get_project(project_id)
+        return render_template("remove_project.html", project=project)
 
     if request.method == "POST":
         if "remove" in request.form:
-            items.remove_item(item_id)
+            projects.remove_project(project_id)
             return redirect("/")
         else:
-            return redirect("/item/" + str(item_id))
+            return redirect("/project/" + str(project_id))
 
 
 @app.route("/register")
 def register():
     return render_template("register.html")
+
+@app.route("/registration_complete")
+def registration_complete():
+    return render_template("registration_complete.html")
+
 
 @app.route("/create", methods=["POST"])
 def create():
@@ -96,7 +101,7 @@ def create():
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo varattu"
 
-    return "Tunnus luotu"
+    return redirect("/registration_complete")
 
 
 @app.route("/login", methods=["GET", "POST"])
