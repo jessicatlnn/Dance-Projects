@@ -7,27 +7,27 @@
 
 <body>
   <h1>Tanssiprojektin muokkaus</h1>
-  <form action="/update_item" method="post">
+  <form action="/update_project" method="post">
     <p>
       Projektin nimi: <br />
-      <input type="text" name="title" value="{{ item.title }}"/>
+      <input type="text" name="title" value="{{ project.title }}"/>
     </p>
     <p>
       Kuvaus: <br /> 
-      <textarea name="description" rows="8" cols="60">{{ item.description }}</textarea>
+      <textarea name="description" rows="8" cols="60">{{ project.description }}</textarea>
     </p>
     <p>
       Tanssityyli: <br />
       <select name="dance_style">
         {% for style in dance_styles %}
           <option value="{{ style.id }}"
-            {% if style.id == item.dance_style_id %}selected{% endif %}>
+            {% if style.id == project.dance_style_id %}selected{% endif %}>
             {{ style.name }}
     </option>
         {% endfor %}
       </select>
     </p>
-    <input type="hidden" name="item_id" value="{{ item.id }}" />
+    <input type="hidden" name="project_id" value="{{ project.id }}" />
     <input type="submit" value="Päivitä tanssiprojekti" />
   </form>
 </body>

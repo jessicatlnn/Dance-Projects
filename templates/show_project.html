@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{ project.title }}</title>
+</head>
+
+<body>
+  <h1>{{ project.title }}</h1>
+  {% if session.user_id == project.user_id %}
+  <p>
+    <a href="/edit_project/{{ project.id }}">Muokkaa</a>
+    <a href="/remove_project/{{ project.id }}">Poista</a>
+  </p>
+  {% endif %}
+  <p>
+    {{ project.description }}
+  </p>
+  <p>
+    Tanssityyli: {{ project.dance_style }}
+  </p>
+  <p>
+    Ilmoittaja: {{ project.username }}
+  </p>
+  <p>
+    <a href="/">Takaisin</a>
+  </p>
+  
+</body>
+
+</html>
+

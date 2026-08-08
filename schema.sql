@@ -18,7 +18,7 @@ INSERT INTO dance_styles (id, name) VALUES
 (6, 'Baletti'),
 (7, 'Muu');
 
-CREATE TABLE items (
+CREATE TABLE projects (
     id INTEGER PRIMARY KEY,
     title TEXT,
     description TEXT,
