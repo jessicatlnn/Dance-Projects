@@ -91,15 +91,26 @@ def create():
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
+
+    if len(username) < 3:
+        return render_template("register.html", error="Käyttäjänimen täytyy olla vähintään 3 merkkiä pitkä")
+    
+    if " " in username:
+        return render_template("register.html", error="Käyttäjänimessä ei saa olla välilyöntejä")
+    
+    if len(password1) < 6:
+        return render_template("register.html", error="Salasanan täytyy olla vähintään 6 merkkiä pitkä")
+    
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
+        return render_template("register.html", error="Salasanat eivät ole samat")
+    
     password_hash = generate_password_hash(password1)
 
     try:
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        return render_template("register.html", error="Tunnus on jo varattu")
 
     return redirect("/registration_complete")
 

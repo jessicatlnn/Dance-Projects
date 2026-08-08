@@ -6,6 +6,11 @@
 </head>
 
 <body>
+
+  {% if error %}
+    <p>{{ error }}</p>
+  {% endif %}
+  
   <form action="/create" method="post">
     <p>
       Tunnus: <br />
