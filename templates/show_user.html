@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Käyttäjä {{ user.username }}</title>
+</head>
+
+<body>
+  <h1>Käyttäjä {{ user.username }}</h1>
+  <p>
+    Käyttäjällä on yhteensä {{ projects | count }} tanssiprojektia.
+  </p>
+  <h2>Projektit</h2>
+  <ul>
+    {% for project in projects %}
+    <li><a href="/project/{{ project.id }}">{{ project.title }}</a></li>
+    {% endfor %}
+  </ul>
+  <p>
+    <a href="/">Takaisin</a>
+  </p>
+
+</body>
+
+</html>

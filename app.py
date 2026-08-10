@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import db
 import config
 import projects
+import users
 
 
 app = Flask(__name__)
@@ -18,6 +19,14 @@ def require_login():
 def index():
     all_projects = projects.get_projects()
     return render_template("index.html", projects=all_projects)
+
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    projects = users.get_projects(user_id)
+    return render_template("show_user.html", user=user, projects=projects)
 
 @app.route("/find_project")
 def find_project():
