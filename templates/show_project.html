@@ -20,12 +20,18 @@
     Tanssityyli: {{ project.dance_style }}
   </p>
   <p>
+    Sijainti:
+    {% for location in locations %}
+      {{ location.name }}{% if not loop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+  <p>
     Ilmoittaja: {{ project.username }}
   </p>
   <p>
     <a href="/">Takaisin</a>
   </p>
-  
+
 </body>
 
 </html>

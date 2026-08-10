@@ -8,6 +8,11 @@
 <body>
   <h1>Uusi tanssiprojekti</h1>
   <form action="/create_project" method="post">
+
+    {% if error %}
+      <p>{{ error }}</p>
+    {% endif %}
+
     <p>
       Projektin nimi: <br />
       <input type="text" name="title" />
@@ -23,6 +28,15 @@
           <option value="{{ style.id }}">{{ style.name }}</option>
         {% endfor %}
       </select>
+    </p>
+    <p>
+      Sijainti: <br />
+        {% for location in locations %}
+          <label>
+            <input type="checkbox" name="locations" value="{{ location.id }}">
+            {{ location.name }}
+          </label>
+        {% endfor %}
     </p>
     <input type="submit" value="Luo tanssiprojekti" />
   </form>

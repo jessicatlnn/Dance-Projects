@@ -25,3 +25,24 @@ CREATE TABLE projects (
     dance_style_id INTEGER REFERENCES dance_styles(id),
     user_id INTEGER REFERENCES users
 );
+
+CREATE TABLE locations (
+    id INTEGER PRIMARY KEY,
+    name TEXT
+);
+
+INSERT INTO locations (id, name) VALUES
+(1, 'Helsinki'),
+(2, 'Vantaa'),
+(3, 'Espoo'),
+(4, 'Kerava'),
+(5, 'Tampere'),
+(6, 'Turku'),
+(7, 'Rovaniemi'),
+(8, 'Muu');
+
+CREATE TABLE project_locations (
+    project_id INTEGER REFERENCES projects(id),
+    location_id INTEGER REFERENCES locations(id),
+    PRIMARY KEY (project_id, location_id)
+);

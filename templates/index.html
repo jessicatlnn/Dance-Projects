@@ -9,7 +9,7 @@
     <h1>Tanssiprojektit</h1>
   {% if session.username %}
   <p>
-    Olet kirjautunut nimellä {{ session.username }}, id-numerosi on {{ session.user_id }}
+    Olet kirjautunut nimellä {{ session.username }}
   </p>
   {% endif %}
 
@@ -23,7 +23,9 @@
   </p>
 
   <p>
+    {% if session.user_id %}
     <a href="/new_project">Uusi tanssiprojekti</a>
+    {% endif %}
     <a href="/find_project">Etsi tanssiprojekti</a>
   </p>
 

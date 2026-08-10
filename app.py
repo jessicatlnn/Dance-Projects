@@ -28,29 +28,47 @@ def find_project():
 @app.route("/project/<int:project_id>")
 def show_project(project_id):
     project = projects.get_project(project_id)
-    return render_template("show_project.html", project=project)
+    locations = projects.get_project_locations(project_id)
+    return render_template("show_project.html", project=project, locations=locations)
 
 @app.route("/new_project")
 def new_project():
-    dance_styles = db.query("SELECT * FROM dance_styles")
-    return render_template("new_project.html", dance_styles=dance_styles)
+    dance_styles = db.query("SELECT id, name FROM dance_styles")
+    locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
+    return render_template("new_project.html", dance_styles=dance_styles, locations=locations)
 
 @app.route("/create_project", methods=["POST"])
 def create_project():
     title = request.form["title"]
     description = request.form["description"]
     dance_style_id = request.form["dance_style"]
+    location_ids = request.form.getlist("locations")
     user_id = session["user_id"]
 
-    projects.add_project(title, description, dance_style_id, user_id)
+    if len(title) < 3:
+        dance_styles = db.query("SELECT id, name FROM dance_styles")
+        locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
+
+        return render_template(
+            "new_project.html", error="Otsikon täytyy olla vähintään 3 merkkiä pitkä", dance_styles=dance_styles, locations=locations)
+
+    projects.add_project(title, description, dance_style_id, location_ids, user_id)
 
     return redirect("/")
 
 @app.route("/edit_project/<int:project_id>")
 def edit_project(project_id):
     project = projects.get_project(project_id)
-    dance_styles = db.query("SELECT * FROM dance_styles")
-    return render_template("edit_project.html", project=project, dance_styles=dance_styles)
+    dance_styles = db.query("SELECT id, name FROM dance_styles")
+    locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
+
+    project_locations = projects.get_project_locations(project_id)
+    project_location_ids = [location["id"] for location in project_locations]
+
+    if project["user_id"] != session["user_id"]:
+        abort(403)
+
+    return render_template("edit_project.html", project=project, dance_styles=dance_styles, locations=locations, project_location_ids=project_location_ids)
 
 @app.route("/update_project", methods=["POST"])
 def update_project():
@@ -58,15 +76,36 @@ def update_project():
     title = request.form["title"]
     description = request.form["description"]
     dance_style_id = request.form["dance_style"]
+    location_ids = request.form.getlist("locations")
 
-    projects.update_project(project_id, title, description, dance_style_id)
+    project = projects.get_project(project_id)
+
+    if project["user_id"] != session["user_id"]:
+        abort(403)
+
+    if len(title) < 3:
+        dance_styles = db.query("SELECT id, name FROM dance_styles")
+        locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
+
+        project_locations = projects.get_project_locations(project_id)
+        project_location_ids = [location["id"] for location in project_locations]
+
+        return render_template("edit_project.html", project=project, dance_styles=dance_styles, locations=locations, project_location_ids=project_location_ids,
+                                error="Otsikon täytyy olla vähintään 3 merkkiä pitkä")
+
+    projects.update_project(project_id, title, description, dance_style_id, location_ids)
 
     return redirect("/project/" + str(project_id))
 
 @app.route("/remove_project/<int:project_id>", methods=["GET", "POST"])
 def remove_project(project_id):
+    project = projects.get_project(project_id)
+    print("PROJECT OWNER:", project["user_id"])
+    print("LOGGED IN USER:", session["user_id"])
+    if project["user_id"] != session["user_id"]:
+        abort(403)
+
     if request.method == "GET":
-        project = projects.get_project(project_id)
         return render_template("remove_project.html", project=project)
 
     if request.method == "POST":
@@ -125,9 +164,15 @@ def login():
         password = request.form["password"]
 
         sql = "SELECT id, password_hash FROM users WHERE username = ?"
-        result = db.query(sql, [username])[0]
-        user_id = result["id"]
-        password_hash = result["password_hash"]
+        result = db.query(sql, [username])
+
+        if not result:
+            return render_template("login.html", error="Väärä käyttäjätunnus tai salasana")
+
+
+        user = result[0]
+        user_id = user["id"]
+        password_hash = user["password_hash"]
 
 
         if check_password_hash(password_hash, password):
@@ -135,7 +180,7 @@ def login():
             session["username"] = username
             return redirect("/")
         else:
-            return "VIRHE: väärä tunnus tai salasana"
+            return render_template("login.html", error="Väärä käyttäjätunnus tai salasana")
 
 @app.route("/logout")
 def logout():
