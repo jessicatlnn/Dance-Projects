@@ -10,6 +10,10 @@ import projects
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+def require_login():
+    if "user_id" not in session:
+        abort(403)
+
 @app.route("/")
 def index():
     all_projects = projects.get_projects()
@@ -35,12 +39,14 @@ def show_project(project_id):
 
 @app.route("/new_project")
 def new_project():
+    require_login()
     dance_styles = db.query("SELECT id, name FROM dance_styles")
     locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
     return render_template("new_project.html", dance_styles=dance_styles, locations=locations)
 
 @app.route("/create_project", methods=["POST"])
 def create_project():
+    require_login()
     title = request.form["title"]
     description = request.form["description"]
     dance_style_id = request.form["dance_style"]
@@ -60,6 +66,7 @@ def create_project():
 
 @app.route("/edit_project/<int:project_id>")
 def edit_project(project_id):
+    require_login()
     project = projects.get_project(project_id)
     if not project:
         abort(404)
@@ -76,6 +83,7 @@ def edit_project(project_id):
 
 @app.route("/update_project", methods=["POST"])
 def update_project():
+    require_login()
     project_id = request.form["project_id"]
     title = request.form["title"]
     description = request.form["description"]
@@ -105,6 +113,7 @@ def update_project():
 
 @app.route("/remove_project/<int:project_id>", methods=["GET", "POST"])
 def remove_project(project_id):
+    require_login()
     project = projects.get_project(project_id)
     if not project:
         abort(404)
@@ -191,6 +200,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    del session["user_id"]
-    del session["username"]
+    if "user_id" in session:
+        del session["user_id"]
+        del session["username"]
     return redirect("/")
