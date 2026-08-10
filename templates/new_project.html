@@ -15,15 +15,16 @@
 
     <p>
       Projektin nimi: <br />
-      <input type="text" name="title" />
+      <input type="text" name="title" maxlength="50" required />
     </p>
     <p>
       Kuvaus: <br /> 
-      <textarea name="description" rows="8" cols="60"></textarea>
+      <textarea name="description" rows="8" cols="60" maxlength="1000" required></textarea>
     </p>
     <p>
       Tanssityyli: <br />
-      <select name="dance_style">
+      <select name="dance_style" required>
+        <option value="" disabled selected>Valitse tanssityyli</option>
         {% for style in dance_styles %}
           <option value="{{ style.id }}">{{ style.name }}</option>
         {% endfor %}
