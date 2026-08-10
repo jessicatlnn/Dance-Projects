@@ -28,6 +28,8 @@ def find_project():
 @app.route("/project/<int:project_id>")
 def show_project(project_id):
     project = projects.get_project(project_id)
+    if not project:
+        abort(404)
     locations = projects.get_project_locations(project_id)
     return render_template("show_project.html", project=project, locations=locations)
 
@@ -59,6 +61,8 @@ def create_project():
 @app.route("/edit_project/<int:project_id>")
 def edit_project(project_id):
     project = projects.get_project(project_id)
+    if not project:
+        abort(404)
     dance_styles = db.query("SELECT id, name FROM dance_styles")
     locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
 
@@ -79,6 +83,8 @@ def update_project():
     location_ids = request.form.getlist("locations")
 
     project = projects.get_project(project_id)
+    if not project:
+        abort(404)
 
     if project["user_id"] != session["user_id"]:
         abort(403)
@@ -100,8 +106,9 @@ def update_project():
 @app.route("/remove_project/<int:project_id>", methods=["GET", "POST"])
 def remove_project(project_id):
     project = projects.get_project(project_id)
-    print("PROJECT OWNER:", project["user_id"])
-    print("LOGGED IN USER:", session["user_id"])
+    if not project:
+        abort(404)
+
     if project["user_id"] != session["user_id"]:
         abort(403)
 

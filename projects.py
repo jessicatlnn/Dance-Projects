@@ -31,7 +31,8 @@ def get_project(project_id):
             WHERE projects.user_id = users.id AND
                   projects.dance_style_id = dance_styles.id AND
                   projects.id = ?"""
-    return db.query(sql, [project_id])[0]
+    result = db.query(sql, [project_id])
+    return result[0] if result else None
 
 def get_project_locations(project_id):
     sql = """SELECT locations.id, locations.name
