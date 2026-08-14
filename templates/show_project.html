@@ -20,6 +20,20 @@
     Tanssityyli: {{ project.dance_style }}
   </p>
   <p>
+    Taso:
+    {% if project.level == "alkeistaso" %}
+    Alkeistaso
+    {% elif project.level == "keskitaso" %}
+    Keskitaso
+    {% elif project.level == "jatkotaso" %}
+    Jatkotaso
+    {% elif project.level == "mestaritaso" %}
+    Mestaritaso
+    {% elif project.level == "avoin_taso" %}
+    Avointaso
+    {% endif %}
+  </p>
+  <p>
     Sijainti:
     {% for location in locations %}
       {{ location.name }}{% if not loop.last %}, {% endif %}
@@ -29,7 +43,7 @@
     Ilmoittaja: <a href="/user/{{ project.user_id }}">{{ project.username }}</a>
   </p>
   <p>
-    <a href="/">Takaisin</a>
+    <a href="/">Takaisin kotisivulle</a>
   </p>
 
 </body>

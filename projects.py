@@ -1,10 +1,10 @@
 import db
 
-def add_project(title, description, dance_style_id, location_ids, user_id):
-    sql = """INSERT INTO projects (title, description, dance_style_id   , user_id)
-             VALUES (?, ?, ?, ?)"""
+def add_project(title, description, dance_style_id, level, location_ids, user_id):
+    sql = """INSERT INTO projects (title, description, dance_style_id, level, user_id)
+             VALUES (?, ?, ?, ?, ?)"""
 
-    db.execute(sql, [title, description, dance_style_id, user_id])
+    db.execute(sql, [title, description, dance_style_id, level, user_id])
 
     project_id = db.last_insert_id()
 
@@ -24,6 +24,7 @@ def get_project(project_id):
                     projects.title,
                     projects.description,
                     projects.dance_style_id,
+                    projects.level,
                     dance_styles.name AS dance_style,
                     users.id user_id,
                     users.username
@@ -42,12 +43,13 @@ def get_project_locations(project_id):
              WHERE project_locations.project_id = ?"""
     return db.query(sql, [project_id])
 
-def update_project(project_id, title, description, dance_style_id, location_ids):
+def update_project(project_id, title, description, dance_style_id, level, location_ids):
     sql = """UPDATE projects SET title = ?,
                               description = ?,
-                              dance_style_id = ?
-                          WHERE id = ?"""
-    db.execute(sql, [title, description, dance_style_id, project_id ])
+                              dance_style_id = ?,
+                              level = ?
+             WHERE id = ?"""
+    db.execute(sql, [title, description, dance_style_id, level, project_id ])
 
     sql = "DELETE FROM project_locations WHERE project_id = ?"
     db.execute(sql, [project_id])

@@ -24,10 +24,21 @@
     <p>
       Tanssityyli: <br />
       <select name="dance_style" required>
-        <option value="" disabled selected>Valitse tanssityyli</option>
+        <option value="" disabled selected>(valitse)</option>
         {% for style in dance_styles %}
           <option value="{{ style.id }}">{{ style.name }}</option>
         {% endfor %}
+      </select>
+    </p>
+    <p>
+      Taso: <br />
+      <select name="level" required>
+        <option value="" disabled selected>(valitse)</option>
+        <option value="alkeistaso">Alkeistaso</option>
+        <option value="keskitaso">Keskitaso</option>
+        <option value="jatkotaso">Jatkotaso</option>
+        <option value="mestaritaso">Mestaritaso</option>
+        <option value="avoin_taso">Avoin taso</option>
       </select>
     </p>
     <p>

@@ -23,6 +23,7 @@ CREATE TABLE projects (
     title TEXT,
     description TEXT,
     dance_style_id INTEGER REFERENCES dance_styles(id),
+    level TEXT,
     user_id INTEGER REFERENCES users
 );
 
