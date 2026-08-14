@@ -34,11 +34,9 @@
       Taso: <br />
       <select name="level" required>
         <option value="" disabled selected>(valitse)</option>
-        <option value="alkeistaso">Alkeistaso</option>
-        <option value="keskitaso">Keskitaso</option>
-        <option value="jatkotaso">Jatkotaso</option>
-        <option value="mestaritaso">Mestaritaso</option>
-        <option value="avoin_taso">Avoin taso</option>
+        {% for level in levels %}
+          <option value="{{ level.id }}">{{ level.name }}</option>
+        {% endfor %}
       </select>
     </p>
     <p>

@@ -21,17 +21,7 @@
   </p>
   <p>
     Taso:
-    {% if project.level == "alkeistaso" %}
-    Alkeistaso
-    {% elif project.level == "keskitaso" %}
-    Keskitaso
-    {% elif project.level == "jatkotaso" %}
-    Jatkotaso
-    {% elif project.level == "mestaritaso" %}
-    Mestaritaso
-    {% elif project.level == "avoin_taso" %}
-    Avointaso
-    {% endif %}
+    {{ project.level }}
   </p>
   <p>
     Sijainti:

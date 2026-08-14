@@ -30,7 +30,7 @@
           <option value="{{ style.id }}"
             {% if style.id == project.dance_style_id %}selected{% endif %}>
             {{ style.name }}
-    </option>
+          </option>
         {% endfor %}
       </select>
     </p>
@@ -38,15 +38,15 @@
     <p>
       Taso: <br />
       <select name="level" required>
-        <option value="" disabled {% if not project.level %}selected{% endif %}>(valitse)</option>
-        <option value="alkeistaso" {% if project.level == "alkeistaso" %}selected{% endif %}>Alkeistaso</option>
-        <option value="keskitaso" {% if project.level == "keskitaso" %}selected{% endif %}>Keskitaso</option>
-        <option value="jatkotaso" {% if project.level == "jatkotaso" %}selected{% endif %}>Jatkotaso</option>
-        <option value="mestaritaso"{% if project.level == "mestaritaso" %}selected{% endif %}>Mestaritaso</option>
-        <option value="avoin taso" {% if project.level == "avoin_taso" %}selected{% endif %}>Avoin taso</option>
+        <option value="" disabled>(valitse)</option>
+        {% for level in levels %}
+          <option value="{{ level.id }}"
+            {% if level.id == project.level_id %}selected{% endif %}>
+            {{ level.name }}
+          </option>
+        {% endfor %}
       </select>
     </p>
-
     <p>
       Sijainti: <br />
         {% for location in locations %}

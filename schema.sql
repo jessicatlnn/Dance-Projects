@@ -18,12 +18,24 @@ INSERT INTO dance_styles (id, name) VALUES
 (6, 'Baletti'),
 (7, 'Muu');
 
+CREATE TABLE levels (
+    id INTEGER PRIMARY KEY,
+    name TEXT
+);
+
+INSERT INTO levels (id, name) VALUES
+(1, 'Alkeistaso'),
+(2, 'Keskitaso'),
+(3, 'Jatkotaso'),
+(4, 'Ammattilaistaso'),
+(5, 'Avoin taso');
+
 CREATE TABLE projects (
     id INTEGER PRIMARY KEY,
     title TEXT,
     description TEXT,
     dance_style_id INTEGER REFERENCES dance_styles(id),
-    level TEXT,
+    level_id INTEGER REFERENCES levels(id),
     user_id INTEGER REFERENCES users
 );
 

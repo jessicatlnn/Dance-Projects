@@ -49,14 +49,16 @@ def show_project(project_id):
 def new_project():
     require_login()
     dance_styles = db.query("SELECT id, name FROM dance_styles ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name")
+    levels = db.query("SELECT id, name FROM levels")
     locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
-    return render_template("new_project.html", dance_styles=dance_styles, locations=locations)
+    return render_template("new_project.html", dance_styles=dance_styles, levels=levels, locations=locations)
 
 @app.route("/create_project", methods=["POST"])
 def create_project():
     require_login()
 
     dance_styles = db.query("SELECT id, name FROM dance_styles ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name")
+    levels = db.query("SELECT id, name FROM levels")
     locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
 
     title = request.form["title"]
@@ -64,29 +66,29 @@ def create_project():
         abort(403)
     if len(title) < 3:
         return render_template(
-            "new_project.html", error="Otsikon täytyy olla vähintään 3 merkkiä pitkä", dance_styles=dance_styles, locations=locations)
+            "new_project.html", error="Otsikon täytyy olla vähintään 3 merkkiä pitkä", dance_styles=dance_styles, levels=levels, locations=locations)
 
     description = request.form["description"]
     if len(description) > 1000:
         abort(403)
     if len(description) < 3:
         return render_template(
-            "new_project.html", error="Kuvauksen täytyy olla vähintään 3 merkkiä pitkä", dance_styles=dance_styles, locations=locations)
+            "new_project.html", error="Kuvauksen täytyy olla vähintään 3 merkkiä pitkä", dance_styles=dance_styles, levels=levels, locations=locations)
 
     dance_style_id = request.form["dance_style"]
 
-    level = request.form["level"]
-    if not level:
+    level_id = request.form["level"]
+    if not level_id:
         return render_template(
-            "new_project.html", error="Valitse taso", dance_styles=dance_styles, locations=locations)
+            "new_project.html", error="Valitse taso", dance_styles=dance_styles, levels=levels, locations=locations)
 
     location_ids = request.form.getlist("locations")
     if not location_ids:
-        return render_template("new_project.html", error="Valitse vähintään yksi sijainti", dance_styles=dance_styles, locations=locations)
+        return render_template("new_project.html", error="Valitse vähintään yksi sijainti", dance_styles=dance_styles, levels=levels, locations=locations)
 
     user_id = session["user_id"]
 
-    projects.add_project(title, description, dance_style_id, level, location_ids, user_id)
+    projects.add_project(title, description, dance_style_id, level_id, location_ids, user_id)
 
     return redirect("/")
 
@@ -99,6 +101,7 @@ def edit_project(project_id):
         abort(404)
 
     dance_styles = db.query("SELECT id, name FROM dance_styles ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name")
+    levels = db.query("SELECT id, name FROM levels")
     locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
 
     project_locations = projects.get_project_locations(project_id)
@@ -107,22 +110,26 @@ def edit_project(project_id):
     if project["user_id"] != session["user_id"]:
         abort(403)
 
-    return render_template("edit_project.html", project=project, dance_styles=dance_styles, locations=locations, project_location_ids=project_location_ids)
+    return render_template("edit_project.html", project=project, dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids)
 
 @app.route("/update_project", methods=["POST"])
 def update_project():
     require_login()
 
     project_id = request.form["project_id"]
+
     project = projects.get_project(project_id)
-    project_locations = projects.get_project_locations(project_id)
-    project_location_ids = [location["id"] for location in project_locations]
     if not project:
         abort(404)
+
+    project_locations = projects.get_project_locations(project_id)
+    project_location_ids = [location["id"] for location in project_locations]
+
     if project["user_id"] != session["user_id"]:
         abort(403)
 
     dance_styles = db.query("SELECT id, name FROM dance_styles ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name")
+    levels = db.query("SELECT id, name FROM levels")
     locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
 
     title = request.form["title"]
@@ -130,31 +137,29 @@ def update_project():
     if len(title) > 50:
         abort(403)
     if len(title) < 3:
-        return render_template("edit_project.html", project=project, dance_styles=dance_styles, locations=locations, project_location_ids=project_location_ids,
+        return render_template("edit_project.html", project=project, dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids,
                                 error="Otsikon täytyy olla vähintään 3 merkkiä pitkä")
 
     description = request.form["description"]
     if len(description) > 1000:
         abort(403)
     if len(description) < 3:
-        return render_template("edit_project.html", project=project, dance_styles=dance_styles, locations=locations, project_location_ids=project_location_ids,
+        return render_template("edit_project.html", project=project, dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids,
                                 error="Kuvauksen täytyy olla vähintään 3 merkkiä pitkä")
 
     dance_style_id = request.form["dance_style"]
 
-    level = request.form["level"]
-    if not level:
+    level_id = request.form["level"]
+    if not level_id:
         return render_template(
-            "new_project.html", error="Valitse taso", dance_styles=dance_styles, locations=locations)
+            "edit_project.html", project=project, error="Valitse taso", dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids)
 
     location_ids = request.form.getlist("locations")
     if not location_ids:
-        project_locations = projects.get_project_locations(project_id)
-        project_location_ids = [location["id"] for location in project_locations]
-        return render_template("edit_project.html", project=project, dance_styles=dance_styles, locations=locations, project_location_ids=project_location_ids,
+        return render_template("edit_project.html", project=project, dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids,
         error="Valitse vähintään yksi sijainti")
 
-    projects.update_project(project_id, title, description, dance_style_id, level, location_ids)
+    projects.update_project(project_id, title, description, dance_style_id, level_id, location_ids)
 
     return redirect("/project/" + str(project_id))
 

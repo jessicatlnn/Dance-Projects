@@ -1,10 +1,10 @@
 import db
 
-def add_project(title, description, dance_style_id, level, location_ids, user_id):
-    sql = """INSERT INTO projects (title, description, dance_style_id, level, user_id)
+def add_project(title, description, dance_style_id, level_id, location_ids, user_id):
+    sql = """INSERT INTO projects (title, description, dance_style_id, level_id, user_id)
              VALUES (?, ?, ?, ?, ?)"""
 
-    db.execute(sql, [title, description, dance_style_id, level, user_id])
+    db.execute(sql, [title, description, dance_style_id, level_id, user_id])
 
     project_id = db.last_insert_id()
 
@@ -12,8 +12,6 @@ def add_project(title, description, dance_style_id, level, location_ids, user_id
         sql = """INSERT INTO project_locations (project_id, location_id)
                  VALUES (?, ?)"""
         db.execute(sql, [project_id, location_id])
-
-
 
 def get_projects():
     sql = "SELECT id, title FROM projects ORDER BY id DESC"
@@ -24,32 +22,33 @@ def get_project(project_id):
                     projects.title,
                     projects.description,
                     projects.dance_style_id,
-                    projects.level,
+                    projects.level_id,
+                    levels.name AS level,
                     dance_styles.name AS dance_style,
                     users.id user_id,
                     users.username
-            FROM projects, users, dance_styles
-            WHERE projects.user_id = users.id AND
-                  projects.dance_style_id = dance_styles.id AND
-                  projects.id = ?"""
+            FROM projects
+            JOIN users ON projects.user_id = users.id
+            JOIN dance_styles ON projects.dance_style_id = dance_styles.id
+            JOIN levels ON projects.level_id = levels.id
+            WHERE projects.id = ?"""
     result = db.query(sql, [project_id])
     return result[0] if result else None
 
 def get_project_locations(project_id):
     sql = """SELECT locations.id, locations.name
              FROM project_locations
-             JOIN locations
-             ON project_locations.location_id = locations.id
+             JOIN locations ON project_locations.location_id = locations.id
              WHERE project_locations.project_id = ?"""
     return db.query(sql, [project_id])
 
-def update_project(project_id, title, description, dance_style_id, level, location_ids):
+def update_project(project_id, title, description, dance_style_id, level_id, location_ids):
     sql = """UPDATE projects SET title = ?,
                               description = ?,
                               dance_style_id = ?,
-                              level = ?
+                              level_id = ?
              WHERE id = ?"""
-    db.execute(sql, [title, description, dance_style_id, level, project_id ])
+    db.execute(sql, [title, description, dance_style_id, level_id, project_id ])
 
     sql = "DELETE FROM project_locations WHERE project_id = ?"
     db.execute(sql, [project_id])
