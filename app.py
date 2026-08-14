@@ -42,8 +42,32 @@ def show_project(project_id):
     project = projects.get_project(project_id)
     if not project:
         abort(404)
+
     locations = projects.get_project_locations(project_id)
-    return render_template("show_project.html", project=project, locations=locations)
+    participants = projects.get_participants(project_id)
+
+    return render_template("show_project.html", project=project, locations=locations, participants=participants)
+
+@app.route("/new_participant", methods=["POST"])
+def new_participant():
+    require_login()
+
+    project_id = request.form["project_id"]
+    project = projects.get_project(project_id)
+    if not project:
+        abort(404)
+
+    name = request.form["participant_name"].strip()
+    surname = request.form["participant_surname"].strip()
+    if not name or not surname:
+        abort(400)
+    full_name = name + " " + surname
+
+    user_id = session["user_id"]
+
+    projects.add_participant(project_id, user_id, full_name)
+
+    return redirect("/project/" + str(project_id))
 
 @app.route("/new_project")
 def new_project():

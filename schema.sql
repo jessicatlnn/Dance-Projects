@@ -30,15 +30,6 @@ INSERT INTO levels (id, name) VALUES
 (4, 'Ammattilaistaso'),
 (5, 'Avoin taso');
 
-CREATE TABLE projects (
-    id INTEGER PRIMARY KEY,
-    title TEXT,
-    description TEXT,
-    dance_style_id INTEGER REFERENCES dance_styles(id),
-    level_id INTEGER REFERENCES levels(id),
-    user_id INTEGER REFERENCES users
-);
-
 CREATE TABLE locations (
     id INTEGER PRIMARY KEY,
     name TEXT
@@ -54,8 +45,24 @@ INSERT INTO locations (id, name) VALUES
 (7, 'Rovaniemi'),
 (8, 'Muu');
 
+CREATE TABLE projects (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    description TEXT,
+    dance_style_id INTEGER REFERENCES dance_styles(id),
+    level_id INTEGER REFERENCES levels(id),
+    user_id INTEGER REFERENCES users
+);
+
 CREATE TABLE project_locations (
     project_id INTEGER REFERENCES projects(id),
     location_id INTEGER REFERENCES locations(id),
     PRIMARY KEY (project_id, location_id)
+);
+
+CREATE TABLE participants (
+    id INTEGER PRIMARY KEY,
+    project_id INTEGER REFERENCES projects(id),
+    user_id INTEGER REFERENCES users(id),
+    name TEXT
 );

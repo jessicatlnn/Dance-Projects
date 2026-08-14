@@ -20,8 +20,7 @@
     Tanssityyli: {{ project.dance_style }}
   </p>
   <p>
-    Taso:
-    {{ project.level }}
+    Taso: {{ project.level }}
   </p>
   <p>
     Sijainti:
@@ -32,6 +31,21 @@
   <p>
     Ilmoittaja: <a href="/user/{{ project.user_id }}">{{ project.username }}</a>
   </p>
+  <h2>Osallistujat</h2>
+  <ul>
+    {% for participant in participants %}
+    <li><a href="/user/{{ participant.user_id }}">{{ participant.name }}</a></li>
+    {% endfor %}
+  </ul>
+  <h2>Osallistu projektiin</h2>
+  <form action="/new_participant" method="post">
+    Nimi:
+    <input type="text" name="participant_name" required />
+    Sukunimi:
+    <input type="text" name="participant_surname" required />
+    <input type="hidden" name="project_id" value="{{ project.id }}"/>
+    <input type="submit" value="Osallistu" />
+  </form>
   <p>
     <a href="/">Takaisin kotisivulle</a>
   </p>

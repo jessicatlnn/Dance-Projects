@@ -72,3 +72,20 @@ def find_projects(query):
              ORDER BY id DESC"""
     like = "%" + query + "%"
     return db.query(sql, [like, like])
+
+def add_participant(project_id, user_id, full_name):
+    sql = """INSERT INTO participants (project_id, user_id, name) VALUES (?, ?, ?)"""
+    db.execute(sql, [project_id, user_id, full_name])
+
+def get_participants(project_id):
+    sql = """SELECT participants.name,
+                    users.id AS user_id,
+                    users.username
+             FROM participants, users
+             WHERE participants.project_id = ?
+             AND participants.user_id = users.id
+             ORDER BY participants.id"""
+
+    result = db.query(sql, [project_id])
+    print("PARTICIPANT RESULT:", result)
+    return result
