@@ -1,3 +1,4 @@
+import secrets
 import sqlite3
 from flask import Flask
 from flask import redirect, abort, render_template, request, session
@@ -12,6 +13,12 @@ app.secret_key = config.secret_key
 
 def require_login():
     if "user_id" not in session:
+        abort(403)
+
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
 @app.route("/")
@@ -51,6 +58,7 @@ def show_project(project_id):
 @app.route("/new_participant", methods=["POST"])
 def new_participant():
     require_login()
+    check_csrf()
 
     project_id = request.form["project_id"]
     project = projects.get_project(project_id)
@@ -80,6 +88,7 @@ def new_project():
 @app.route("/create_project", methods=["POST"])
 def create_project():
     require_login()
+    check_csrf()
 
     dance_styles = db.query("SELECT id, name FROM dance_styles ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name")
     levels = db.query("SELECT id, name FROM levels")
@@ -139,6 +148,8 @@ def edit_project(project_id):
 @app.route("/update_project", methods=["POST"])
 def update_project():
     require_login()
+    check_csrf()
+
 
     project_id = request.form["project_id"]
 
@@ -191,6 +202,7 @@ def update_project():
 def remove_project(project_id):
     require_login()
 
+
     project = projects.get_project(project_id)
     if not project:
         abort(404)
@@ -201,6 +213,7 @@ def remove_project(project_id):
         return render_template("remove_project.html", project=project)
 
     if request.method == "POST":
+        check_csrf()
         if "remove" in request.form:
             projects.remove_project(project_id)
             return redirect("/")
@@ -217,6 +230,8 @@ def registration_complete():
 
 @app.route("/create", methods=["POST"])
 def create():
+    check_csrf()
+
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
@@ -246,8 +261,10 @@ def login():
         password = request.form["password"]
 
         user_id = users.check_login(username, password)
+
         if user_id:
             session["user_id"] = user_id
+            session["csrf_token"] = secrets.token_hex(16)
             session["username"] = username
             return redirect("/")
         else:
