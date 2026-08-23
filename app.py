@@ -80,9 +80,11 @@ def new_participant():
 @app.route("/new_project")
 def new_project():
     require_login()
-    dance_styles = db.query("SELECT id, name FROM dance_styles ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name")
-    levels = db.query("SELECT id, name FROM levels")
-    locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
+
+    dance_styles = projects.get_dance_styles()
+    levels = projects.get_levels()
+    locations = projects.get_locations()
+
     return render_template("new_project.html",
                             dance_styles=dance_styles, levels=levels, locations=locations)
 
@@ -91,9 +93,9 @@ def create_project():
     require_login()
     check_csrf()
 
-    dance_styles = db.query("SELECT id, name FROM dance_styles ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name")
-    levels = db.query("SELECT id, name FROM levels")
-    locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
+    dance_styles = projects.get_dance_styles()
+    levels = projects.get_levels()
+    locations = projects.get_locations()
 
     title = request.form["title"]
     description = request.form["description"]
@@ -170,9 +172,9 @@ def edit_project(project_id):
     if not project:
         abort(404)
 
-    dance_styles = db.query("SELECT id, name FROM dance_styles ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name")
-    levels = db.query("SELECT id, name FROM levels")
-    locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
+    dance_styles = projects.get_dance_styles()
+    levels = projects.get_levels()
+    locations = projects.get_locations()
 
     project_locations = projects.get_project_locations(project_id)
     project_location_ids = [location["id"] for location in project_locations]
@@ -199,9 +201,9 @@ def update_project():
     if project["user_id"] != session["user_id"]:
         abort(403)
 
-    dance_styles = db.query("SELECT id, name FROM dance_styles ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name")
-    levels = db.query("SELECT id, name FROM levels")
-    locations = db.query("SELECT id, name FROM locations ORDER BY name = 'Muu', name")
+    dance_styles = projects.get_dance_styles()
+    levels = projects.get_levels()
+    locations = projects.get_locations()
 
     title = request.form["title"]
 

@@ -73,6 +73,23 @@ def find_projects(query):
     like = "%" + query + "%"
     return db.query(sql, [like, like])
 
+def get_dance_styles():
+    sql = """SELECT id, name
+             FROM dance_styles
+             ORDER BY CASE WHEN name = 'Muu' THEN 1 ELSE 0 END, name"""
+    return db.query(sql)
+
+def get_levels():
+    sql = """SELECT id, name
+             FROM levels"""
+    return db.query(sql)
+
+def get_locations():
+    sql = """SELECT id, name
+             FROM locations
+             ORDER BY name = 'Muu', name"""
+    return db.query(sql)
+
 def add_participant(project_id, user_id, full_name):
     sql = """INSERT INTO participants (project_id, user_id, name) VALUES (?, ?, ?)"""
     db.execute(sql, [project_id, user_id, full_name])
