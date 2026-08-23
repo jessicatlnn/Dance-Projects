@@ -137,7 +137,7 @@ def create_project():
         return render_template(
             "new_project.html",
              error="Valitse taso",
-            title=title,
+             title=title,
              description=description,
              dance_style_id=dance_style_id,
              level_id=level_id,
@@ -182,7 +182,17 @@ def edit_project(project_id):
     if project["user_id"] != session["user_id"]:
         abort(403)
 
-    return render_template("edit_project.html", project=project, dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids)
+    return render_template("edit_project.html",
+                            project=project,
+                            title=project["title"],
+                            description=project["description"],
+                            dance_style_id=project["dance_style_id"],
+                            level_id=project["level_id"],
+                            location_ids=project_location_ids,
+                            dance_styles=dance_styles,
+                            levels=levels,
+                            locations=locations,
+                            project_location_ids=project_location_ids)
 
 @app.route("/update_project", methods=["POST"])
 def update_project():
@@ -195,9 +205,6 @@ def update_project():
     if not project:
         abort(404)
 
-    project_locations = projects.get_project_locations(project_id)
-    project_location_ids = [location["id"] for location in project_locations]
-
     if project["user_id"] != session["user_id"]:
         abort(403)
 
@@ -206,31 +213,66 @@ def update_project():
     locations = projects.get_locations()
 
     title = request.form["title"]
+    description = request.form["description"]
+    dance_style_id = request.form["dance_style"]
+    level_id = request.form["level"]
+    location_ids = request.form.getlist("locations")
 
     if len(title) > 50:
         abort(403)
     if len(title) < 3:
-        return render_template("edit_project.html", project=project, dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids,
-                                error="Otsikon täytyy olla vähintään 3 merkkiä pitkä")
+        return render_template("edit_project.html",
+                               project=project,
+                               title=title,
+                               description=description,
+                               dance_style_id=dance_style_id,
+                               level_id=level_id,
+                               location_ids=location_ids,
+                               dance_styles=dance_styles,
+                               levels=levels,
+                               locations=locations,
+                               error="Otsikon täytyy olla vähintään 3 merkkiä pitkä")
 
-    description = request.form["description"]
     if len(description) > 1000:
         abort(403)
     if len(description) < 3:
-        return render_template("edit_project.html", project=project, dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids,
-                                error="Kuvauksen täytyy olla vähintään 3 merkkiä pitkä")
+        return render_template("edit_project.html",
+                               project=project,
+                               title=title,
+                               description=description,
+                               dance_style_id=dance_style_id,
+                               level_id=level_id,
+                               location_ids=location_ids,
+                               dance_styles=dance_styles,
+                               levels=levels,
+                               locations=locations,
+                               error="Kuvauksen täytyy olla vähintään 3 merkkiä pitkä")
 
-    dance_style_id = request.form["dance_style"]
-
-    level_id = request.form["level"]
     if not level_id:
-        return render_template(
-            "edit_project.html", project=project, error="Valitse taso", dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids)
+        return render_template("edit_project.html",
+                                project=project,
+                                title=title,
+                                description=description,
+                                dance_style_id=dance_style_id,
+                                level_id=level_id,
+                                location_ids=location_ids,
+                                dance_styles=dance_styles,
+                                levels=levels,
+                                locations=locations,
+                                error="Valitse taso")
 
-    location_ids = request.form.getlist("locations")
     if not location_ids:
-        return render_template("edit_project.html", project=project, dance_styles=dance_styles, levels=levels, locations=locations, project_location_ids=project_location_ids,
-        error="Valitse vähintään yksi sijainti")
+        return render_template("edit_project.html",
+                                project=project,
+                                title=title,
+                                description=description,
+                                dance_style_id=dance_style_id,
+                                level_id=level_id,
+                                location_ids=location_ids,
+                                dance_styles=dance_styles,
+                                levels=levels,
+                                locations=locations,
+                                error="Valitse vähintään yksi sijainti")
 
     projects.update_project(project_id, title, description, dance_style_id, level_id, location_ids)
 

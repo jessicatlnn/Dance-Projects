@@ -15,12 +15,12 @@
 
     <p>
       Projektin nimi: <br />
-      <input type="text" name="title" value="{{ project.title }}" maxlength="50" required/>
+      <input type="text" name="title" value="{{ title }}" maxlength="50" required/>
     </p>
 
     <p>
       Kuvaus: <br /> 
-      <textarea name="description" rows="8" cols="60" maxlength="1000" required>{{ project.description }}</textarea>
+      <textarea name="description" rows="8" cols="60" maxlength="1000" required>{{ description }}</textarea>
     </p>
 
     <p>
@@ -28,7 +28,7 @@
       <select name="dance_style" required>
         {% for style in dance_styles %}
           <option value="{{ style.id }}"
-            {% if style.id == project.dance_style_id %}selected{% endif %}>
+            {% if style.id|string == dance_style_id|string %}selected{% endif %}>
             {{ style.name }}
           </option>
         {% endfor %}
@@ -41,7 +41,7 @@
         <option value="" disabled>(valitse)</option>
         {% for level in levels %}
           <option value="{{ level.id }}"
-            {% if level.id == project.level_id %}selected{% endif %}>
+            {% if level.id|string == level_id|string %}selected{% endif %}>
             {{ level.name }}
           </option>
         {% endfor %}
@@ -49,17 +49,18 @@
     </p>
     <p>
       Sijainti: <br />
-        {% for location in locations %}
-          <label>
-            <input type="checkbox" name="locations" value="{{ location.id }}"
-            {% if location.id in project_location_ids %}checked{% endif %}>
-            {{ location.name }}
-          </label>
-        {% endfor %}
+      {% for location in locations %}
+        <label>
+          <input type="checkbox" name="locations" value="{{ location.id }}"
+            {% if location.id|string in location_ids|map('string')|list %}checked{% endif %}>
+          {{ location.name }}
+        </label>
+      {% endfor %}
     </p>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="hidden" name="project_id" value="{{ project.id }}" />
     <input type="submit" value="Päivitä tanssiprojekti" />
+    <a href="/project/{{ project.id }}">Peruuta</a>
   </form>
 </body>
 
