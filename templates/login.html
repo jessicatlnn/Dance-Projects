@@ -6,6 +6,10 @@
 </head>
 
 <body>
+  {% if message %}
+  <p> {{ message }} </p>
+  {% endif %}
+
   {% if session.username %}
   <p>
     Olet kirjautunut nimellä {{ session.username }}
@@ -22,7 +26,7 @@
   <form action="/login" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" />
+      <input type="text" name="username" value="{{ username or ''}}" />
     </p>
     <p>
       Salasana: <br />

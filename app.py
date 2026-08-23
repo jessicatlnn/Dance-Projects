@@ -224,32 +224,35 @@ def remove_project(project_id):
 def register():
     return render_template("register.html")
 
-@app.route("/registration_complete")
-def registration_complete():
-    return render_template("registration_complete.html")
-
 @app.route("/create", methods=["POST"])
 def create():
-    check_csrf()
-
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
 
     if len(username) < 3:
-        return render_template("register.html", error="Käyttäjänimen täytyy olla vähintään 3 merkkiä pitkä")
+        return render_template("register.html",
+                                error="Käyttäjänimen täytyy olla vähintään 3 merkkiä pitkä",
+                                username=username)
     if " " in username:
-        return render_template("register.html", error="Käyttäjänimessä ei saa olla välilyöntejä")
+        return render_template("register.html",
+                                error="Käyttäjänimessä ei saa olla välilyöntejä",
+                                username=username)
     if len(password1) < 6:
-        return render_template("register.html", error="Salasanan täytyy olla vähintään 6 merkkiä pitkä")
+        return render_template("register.html",
+                                error="Salasanan täytyy olla vähintään 6 merkkiä pitkä",
+                                username=username)
     if password1 != password2:
-        return render_template("register.html", error="Salasanat eivät ole samat")
+        return render_template("register.html",
+                                error="Salasanat eivät täsmää",
+                                username=username)
 
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
         return render_template("register.html", error="Tunnus on jo varattu")
-    return redirect("/registration_complete")
+    return render_template("login.html",
+                            message="Tunnus luotu onnistuneesti.")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -264,15 +267,18 @@ def login():
 
         if user_id:
             session["user_id"] = user_id
-            session["csrf_token"] = secrets.token_hex(16)
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
-            return render_template("login.html", error="Väärä käyttäjätunnus tai salasana")
+            return render_template("login.html",
+                                    error="Väärä käyttäjätunnus tai salasana",
+                                    username=username)
 
 @app.route("/logout")
 def logout():
     if "user_id" in session:
         del session["user_id"]
         del session["username"]
+        del session["csrf_token"]
     return redirect("/")

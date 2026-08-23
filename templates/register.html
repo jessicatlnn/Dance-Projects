@@ -14,11 +14,15 @@
   <form action="/create" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" />
+      <input type="text" name="username" value="{{ username or ''}}" />
+      <br />
+      Vähintään 3 merkkiä, ei välilyöntejä.
     </p>
     <p>
       Salasana: <br />
       <input type="password" name="password1" />
+      <br />
+      Vähintään 6 merkkiä.
     </p>
     <p>
       Salasana uudestaan: <br />
