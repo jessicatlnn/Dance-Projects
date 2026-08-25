@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{% block title %}Tanssiprojektit{% endblock %}</title>
+  <link rel="stylesheet" href="/static/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="page">
+        
+        <div class="header">
+        <h1>Tanssiprojektit</h1>
+        </div>
+
+        {% if session.username %}
+        <p>
+            Hei {{ session.username }}!
+        </p>
+        {% endif %}
+
+        <div class="log">
+        <ul>
+            {% if session.user_id %}
+            <li><a href="/logout">Kirjaudu ulos</a></li>
+            {% else %}
+            <li><a href="/login">Kirjaudu sisään</a></li>
+            <li><a href="/register">Luo tunnus</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    
+    <div class="nav">
+        <nav>
+            <ul>
+                {% if session.user_id %}
+            <li><a href="/">Etusivu</a></li>
+            <li><a href="/find_project">Etsi tanssiprojekti</a></li>
+            <li><a href="/new_project">Uusi tanssiprojekti</a></li>
+            {% else %}
+                <li><a href="/">Etusivu</a></li>
+                <li><a href="/find_project">Etsi tanssiprojekti</a></li>
+            {% endif %}
+            </ul>
+        </nav>
+        </div>
+
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+     </div>
+</body>
+
+</html>

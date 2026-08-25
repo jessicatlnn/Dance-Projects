@@ -1,59 +1,15 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Tanssiprojektit</title>
-  <link rel="stylesheet" href="/static/main.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-</head>
+{% block title %}Tanssiprojektit{% endblock %}
 
-<body>
-  <div class="page">
-    <div class="header">
-      <h1>Tanssiprojektit</h1>
-    </div>
+{% block content %}
+    <h2>Tanssiprojektit</h2>
 
-    {% if session.username %}
-      <p>
-        Hei taas {{ session.username }}!
-      </p>
-    {% endif %}
-
-    <div class="log">
-      <ul>
-        {% if session.user_id %}
-        <li><a href="/logout">Kirjaudu ulos</a></li>
-        {% else %}
-          <li><a href="/login">Kirjaudu sisään</a></li>
-          <li><a href="/register">Luo tunnus</a></li>
-        {% endif %}
-      </ul>
-    </div>
-
-    <div class="nav">
-      <nav>
-        <ul>
-          {% if session.user_id %}
-          <li><a href="/find_project">Etsi tanssiprojekti</a></li>
-          <li><a href="/new_project">Uusi tanssiprojekti</a></li>
-          {% else %}
-            <li><a href="/find_project">Etsi tanssiprojekti</a></li>
-          {% endif %}
-        </ul>
-      </nav>
-    </div>
-
-    <div class="content">
-      <h2>Tanssiprojektit</h2>
-      <ul>
+    <ul>
         {% for project in projects %}
-          <li><a href="/project/{{ project.id }}">{{ project.title }}</a></li>
+            <li>
+                <a href="/project/{{ project.id }}">{{ project.title }}</a>
+            </li>
         {% endfor %}
-      </ul>
-    </div>
-  </div>
-</body>
-
-</html>
+    </ul>
+{% endblock %}

@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Etsi tanssiprojekti</title>
-</head>
+{% block title %}Etsi tanssiprojekti{% endblock %}
 
-<body>
-    <h1>Etsi tanssiprojektit</h1>
+{% block content %}
+    <h2>Etsi tanssiprojekti</h2>
 
     <form action="/find_project" method="get">
         <p>
@@ -27,6 +24,4 @@
         {% endfor %}
     </ul>
     {% endif %}
-</body>
-
-</html>
+{% endblock %}

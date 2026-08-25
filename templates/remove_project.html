@@ -1,20 +1,16 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Tanssiprojektin poisto</title>
-</head>
+{% block title %}Tanssiprojektin poisto{% endblock %}
 
-<body>
-  <h1>Tanssiprojektin poisto</h1>
+{% block content %}
+  <h2>Tanssiprojektin poisto</h2>
+
   <p>Ilmoitus: {{ project.title }}</p>
-  <p>Haluatko varmasti poistaa tämän ilmoituksen?</p>
-  <form action="/remove_project/{{ project.id }}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" name="remove" value="Poista ilmoitus">
-    <input type="submit" name="back" value="Palaa takaisin">
-  </form>
-</body>
 
-</html>
-
+  <p>Haluatko varmasti poistaa tämän projektin?</p>
+    <form action="/remove_project/{{ project.id }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <input type="submit" name="remove" value="Poista projekti">
+      <input type="submit" name="back" value="Palaa takaisin">
+    </form>
+{% endblock %}

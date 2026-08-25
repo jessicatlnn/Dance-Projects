@@ -1,57 +1,55 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>{{ project.title }}</title>
-</head>
+{% block title %}{{ project.title }}{% endblock %}
 
-<body>
-  <h1>{{ project.title }}</h1>
+{% block content %}
+  <h2>{{ project.title }}</h2>
+
   {% if session.user_id == project.user_id %}
-  <p>
-    <a href="/edit_project/{{ project.id }}">Muokkaa</a>
-    <a href="/remove_project/{{ project.id }}">Poista</a>
-  </p>
+    <p>
+      <a href="/edit_project/{{ project.id }}">Muokkaa</a>
+      <a href="/remove_project/{{ project.id }}">Poista</a>
+    </p>
   {% endif %}
+
   <p>
     {{ project.description }}
   </p>
+
   <p>
     Tanssityyli: {{ project.dance_style }}
   </p>
+
   <p>
     Taso: {{ project.level }}
   </p>
+
   <p>
     Sijainti:
     {% for location in locations %}
       {{ location.name }}{% if not loop.last %}, {% endif %}
     {% endfor %}
   </p>
+
   <p>
     Ilmoittaja: <a href="/user/{{ project.user_id }}">{{ project.username }}</a>
   </p>
+
   <h2>Osallistujat</h2>
-  <ul>
-    {% for participant in participants %}
-    <li><a href="/user/{{ participant.user_id }}">{{ participant.name }}</a></li>
-    {% endfor %}
-  </ul>
+    <ul>
+      {% for participant in participants %}
+        <li><a href="/user/{{ participant.user_id }}">{{ participant.name }}</a></li>
+      {% endfor %}
+    </ul>
+
   <h2>Osallistu projektiin</h2>
-  <form action="/new_participant" method="post">
-    Nimi:
-    <input type="text" name="participant_name" required />
-    Sukunimi:
-    <input type="text" name="participant_surname" required />
-    <input type="hidden" name="project_id" value="{{ project.id }}"/>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" value="Osallistu" />
-  </form>
-  <p>
-    <a href="/">Takaisin kotisivulle</a>
-  </p>
-
-</body>
-
-</html>
-
+    <form action="/new_participant" method="post">
+      Nimi:
+        <input type="text" name="participant_name" required />
+      Sukunimi:
+        <input type="text" name="participant_surname" required />
+        <input type="hidden" name="project_id" value="{{ project.id }}"/>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="submit" value="Osallistu" />
+    </form>
+{% endblock %}

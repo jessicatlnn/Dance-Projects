@@ -1,29 +1,22 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Käyttäjä {{ user.username }}</title>
-</head>
+{% block title %}Käyttäjä {{ user.username }}{% endblock %}
 
-<body>
-  <h1>Käyttäjä {{ user.username }}</h1>
-  <p>
-    {% if projects | count == 1%}
-    Käyttäjällä on yhteensä {{ projects | count }} tanssiprojekti.
-    {% else %}
-    Käyttäjällä on yhteensä {{ projects | count }} tanssiprojektia.
-    {% endif %}
-  </p>
-  <h2>Projektit</h2>
-  <ul>
-    {% for project in projects %}
-    <li><a href="/project/{{ project.id }}">{{ project.title }}</a></li>
-    {% endfor %}
-  </ul>
-  <p>
-    <a href="/">Takaisin kotisivulle</a>
-  </p>
+{% block content %}
+    <h2>Käyttäjä {{ user.username }}</h2>
 
-</body>
+    <p>
+      {% if projects | count == 1 %}
+        Käyttäjällä on yhteensä {{ projects | count }} tanssiprojekti.
+      {% else %}
+        Käyttäjällä on yhteensä {{ projects | count }} tanssiprojektia.
+      {% endif %}
+    </p>
 
-</html>
+    <h2>Projektit</h2>
+      <ul>
+        {% for project in projects %}
+          <li><a href="/project/{{ project.id }}">{{ project.title }}</a></li>
+        {% endfor %}
+      </ul>
+{% endblock %}
