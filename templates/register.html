@@ -5,15 +5,15 @@
 {% block content %}
   <h2>Rekisteröinti</h2>
 
-  {% if error %}
-    <p>{{ error }}</p>
-  {% endif %}
+  {% for message in get_flashed_messages() %}
+    <p><b>{{ message }}</b></p>
+  {% endfor %}
 
   <form action="/create" method="post">
 
     <p>
       Tunnus: <br />
-        <input type="text" name="username" value="{{ username or ''}}" />
+        <input type="text" name="username" value="{{ filled.username }}" />
       <br />
       Vähintään 3 merkkiä, ei välilyöntejä.
     </p>

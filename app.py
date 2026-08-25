@@ -1,8 +1,6 @@
 import secrets
 import sqlite3
-from flask import Flask
-from flask import redirect, abort, render_template, request, session
-import db
+from flask import redirect, abort, render_template, request, session, Flask, flash
 import config
 import projects
 import users
@@ -85,8 +83,21 @@ def new_project():
     levels = projects.get_levels()
     locations = projects.get_locations()
 
-    return render_template("new_project.html",
-                            dance_styles=dance_styles, levels=levels, locations=locations)
+    filled = {
+        "title": "",
+        "description": "",
+        "dance_style_id": "",
+        "level_id": "",
+        "location_ids": []
+        }
+
+    return render_template(
+        "new_project.html",
+        filled=filled,
+        dance_styles=dance_styles,
+        levels=levels,
+        locations=locations
+        )
 
 @app.route("/create_project", methods=["POST"])
 def create_project():
@@ -103,60 +114,45 @@ def create_project():
     level_id = request.form["level"]
     location_ids = request.form.getlist("locations")
 
+    filled = {
+        "title": title,
+        "description": description,
+        "dance_style_id": dance_style_id,
+        "level_id": level_id,
+        "location_ids": location_ids
+    }
+
+    errors = []
+
     if len(title) > 50:
-        abort(403)
+        errors.append("Otsikko saa olla enintään 50 merkkiä pitkä")
+
     if len(title) < 3:
-        return render_template(
-            "new_project.html",
-             error="Otsikon täytyy olla vähintään 3 merkkiä pitkä",
-             title=title,
-             description=description,
-             dance_style_id=dance_style_id,
-             level_id=level_id,
-             location_ids=location_ids,
-             dance_styles=dance_styles,
-             levels=levels,
-             locations=locations)
+        errors.append("Otsikon täytyy olla vähintään 3 merkkiä pitkä")
 
     if len(description) > 1000:
-        abort(403)
+        errors.append("Kuvaus saa olla enintään 1000 merkkiä pitkä")
+
     if len(description) < 3:
-        return render_template(
-            "new_project.html",
-             error="Kuvauksen täytyy olla vähintään 3 merkkiä pitkä",
-             title=title,
-             description=description,
-             dance_style_id=dance_style_id,
-             level_id=level_id,
-             location_ids=location_ids,
-             dance_styles=dance_styles,
-             levels=levels,
-             locations=locations)
+        errors.append("Kuvauksen täytyy olla vähintään 3 merkkiä pitkä")
 
     if not level_id:
-        return render_template(
-            "new_project.html",
-             error="Valitse taso",
-             title=title,
-             description=description,
-             dance_style_id=dance_style_id,
-             level_id=level_id,
-             location_ids=location_ids,
-             dance_styles=dance_styles,
-             levels=levels,
-             locations=locations)
+        errors.append("Valitse taso")
 
     if not location_ids:
-        return render_template("new_project.html",
-                                error="Valitse vähintään yksi sijainti",
-                                title=title,
-                                description=description,
-                                dance_style_id=dance_style_id,
-                                level_id=level_id,
-                                location_ids=location_ids,
-                                dance_styles=dance_styles,
-                                levels=levels,
-                                locations=locations)
+        errors.append("Valitse vähintään yksi sijainti")
+
+    if errors:
+        for error in errors:
+            flash(error)
+
+        return render_template(
+            "new_project.html",
+            filled=filled,
+            dance_styles=dance_styles,
+            levels=levels,
+            locations=locations
+        )
 
     user_id = session["user_id"]
 
@@ -182,17 +178,20 @@ def edit_project(project_id):
     if project["user_id"] != session["user_id"]:
         abort(403)
 
+    filled = {
+        "title": project["title"],
+        "description": project["description"],
+        "dance_style_id": project["dance_style_id"],
+        "level_id": project["level_id"],
+        "location_ids": project_location_ids
+    }
+
     return render_template("edit_project.html",
                             project=project,
-                            title=project["title"],
-                            description=project["description"],
-                            dance_style_id=project["dance_style_id"],
-                            level_id=project["level_id"],
-                            location_ids=project_location_ids,
+                            filled=filled,
                             dance_styles=dance_styles,
                             levels=levels,
-                            locations=locations,
-                            project_location_ids=project_location_ids)
+                            locations=locations)
 
 @app.route("/update_project", methods=["POST"])
 def update_project():
@@ -218,63 +217,55 @@ def update_project():
     level_id = request.form["level"]
     location_ids = request.form.getlist("locations")
 
+    filled = {
+        "title": title,
+        "description": description,
+        "dance_style_id": dance_style_id,
+        "level_id": level_id,
+        "location_ids": location_ids
+    }
+
+    errors = []
+
     if len(title) > 50:
-        abort(403)
+        errors.append("Otsikko saa olla enintään 50 merkkiä pitkä")
+
     if len(title) < 3:
-        return render_template("edit_project.html",
-                               project=project,
-                               title=title,
-                               description=description,
-                               dance_style_id=dance_style_id,
-                               level_id=level_id,
-                               location_ids=location_ids,
-                               dance_styles=dance_styles,
-                               levels=levels,
-                               locations=locations,
-                               error="Otsikon täytyy olla vähintään 3 merkkiä pitkä")
+        errors.append("Otsikon täytyy olla vähintään 3 merkkiä pitkä")
 
     if len(description) > 1000:
-        abort(403)
+        errors.append("Kuvaus saa olla enintään 1000 merkkiä pitkä")
+
     if len(description) < 3:
-        return render_template("edit_project.html",
-                               project=project,
-                               title=title,
-                               description=description,
-                               dance_style_id=dance_style_id,
-                               level_id=level_id,
-                               location_ids=location_ids,
-                               dance_styles=dance_styles,
-                               levels=levels,
-                               locations=locations,
-                               error="Kuvauksen täytyy olla vähintään 3 merkkiä pitkä")
+        errors.append("Kuvauksen täytyy olla vähintään 3 merkkiä pitkä")
 
     if not level_id:
-        return render_template("edit_project.html",
-                                project=project,
-                                title=title,
-                                description=description,
-                                dance_style_id=dance_style_id,
-                                level_id=level_id,
-                                location_ids=location_ids,
-                                dance_styles=dance_styles,
-                                levels=levels,
-                                locations=locations,
-                                error="Valitse taso")
+        errors.append("Valitse taso")
 
     if not location_ids:
-        return render_template("edit_project.html",
-                                project=project,
-                                title=title,
-                                description=description,
-                                dance_style_id=dance_style_id,
-                                level_id=level_id,
-                                location_ids=location_ids,
-                                dance_styles=dance_styles,
-                                levels=levels,
-                                locations=locations,
-                                error="Valitse vähintään yksi sijainti")
+        errors.append("Valitse vähintään yksi sijainti")
 
-    projects.update_project(project_id, title, description, dance_style_id, level_id, location_ids)
+    if errors:
+        for error in errors:
+            flash(error)
+
+        return render_template(
+            "edit_project.html",
+            project=project,
+            filled=filled,
+            dance_styles=dance_styles,
+            levels=levels,
+            locations=locations
+        )
+
+    projects.update_project(
+        project_id,
+        title,
+        description,
+        dance_style_id,
+        level_id,
+        location_ids
+    )
 
     return redirect("/project/" + str(project_id))
 
@@ -302,7 +293,9 @@ def remove_project(project_id):
 
 @app.route("/register")
 def register():
-    return render_template("register.html")
+    filled = {
+        "username": ""}
+    return render_template("register.html", filled=filled)
 
 @app.route("/create", methods=["POST"])
 def create():
@@ -310,34 +303,63 @@ def create():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
 
+    errors = []
+
     if len(username) < 3:
-        return render_template("register.html",
-                                error="Käyttäjänimen täytyy olla vähintään 3 merkkiä pitkä",
-                                username=username)
+        errors.append("Käyttäjänimen täytyy olla vähintään 3 merkkiä pitkä")
+
     if " " in username:
-        return render_template("register.html",
-                                error="Käyttäjänimessä ei saa olla välilyöntejä",
-                                username=username)
+        errors.append("Käyttäjänimessä ei saa olla välilyöntejä")
+
     if len(password1) < 6:
-        return render_template("register.html",
-                                error="Salasanan täytyy olla vähintään 6 merkkiä pitkä",
-                                username=username)
+        errors.append("Salasanan täytyy olla vähintään 6 merkkiä pitkä")
+
     if password1 != password2:
-        return render_template("register.html",
-                                error="Salasanat eivät täsmää",
-                                username=username)
+        errors.append("Salasanat eivät täsmää")
+
+    if errors:
+        for error in errors:
+            flash(error)
+
+        filled = {
+            "username": username
+        }
+
+        return render_template(
+            "register.html",
+            filled=filled
+        )
 
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
-        return render_template("register.html", error="Tunnus on jo varattu")
-    return render_template("login.html",
-                            message="Tunnus luotu onnistuneesti.")
+        flash("Tunnus on jo varattu")
+
+        filled = {
+            "username": username
+        }
+
+        return render_template(
+            "register.html",
+            filled=filled
+        )
+
+    filled = {
+        "username": username
+    }
+
+    return render_template(
+        "login.html",
+        message="Tunnus luotu onnistuneesti.",
+        filled=filled
+    )
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        filled = {
+            "username": ""}
+        return render_template("login.html", filled=filled)
 
     if request.method == "POST":
         username = request.form["username"]
@@ -351,9 +373,12 @@ def login():
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
-            return render_template("login.html",
-                                    error="Väärä käyttäjätunnus tai salasana",
-                                    username=username)
+            flash("Väärä käyttäjätunnus tai salasana")
+
+            filled = {
+                "username": username}
+
+            return render_template("login.html", filled=filled)
 
 @app.route("/logout")
 def logout():

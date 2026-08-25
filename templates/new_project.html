@@ -7,19 +7,21 @@
 
     <form action="/create_project" method="post">
 
-      {% if error %}
-        <p>{{ error }}</p>
-      {% endif %}
+      {% for message in get_flashed_messages() %}
+      <p>
+        <b>{{ message }}</b>
+      </p>
+      {% endfor %}
 
       <p>
         Projektin nimi: <br />
-        <input type="text" name="title" value="{{ title or '' }}" maxlength="50" required />
+        <input type="text" name="title" value="{{ filled.title }}" maxlength="50" required />
         <br />
         Vähintään 3 merkkiä.
       </p>
       <p>
         Kuvaus: <br />
-        <textarea name="description" rows="8" cols="60" maxlength="1000" required>{{ description or '' }}</textarea>
+        <textarea name="description" rows="8" cols="60" maxlength="1000" required>{{ filled.description }}</textarea>
         <br />
         Vähintään 3 merkkiä.
       </p>
@@ -29,7 +31,7 @@
           <option value="" disabled {% if not dance_style_id %}selected{% endif %}>(valitse)</option>
           {% for style in dance_styles %}
             <option value="{{ style.id }}"
-              {% if style.id|string == dance_style_id|string %}selected{% endif %}>
+              {% if style.id|string == filled.dance_style_id|string %}selected{% endif %}>
               {{ style.name }}
           </option>
           {% endfor %}
@@ -41,7 +43,7 @@
           <option value="" disabled {% if not level_id %}selected{% endif %}>(valitse)</option>
           {% for level in levels %}
             <option value="{{ level.id }}"
-              {% if level.id|string == level_id|string %}selected{% endif %}>
+              {% if level.id|string == filled.level_id|string %}selected{% endif %}>
               {{ level.name }}
           </option>
           {% endfor %}
@@ -52,7 +54,7 @@
           {% for location in locations %}
             <label>
               <input type="checkbox" name="locations" value="{{ location.id }}"
-              {% if location.id|string in location_ids|map('string')|list %}checked{% endif %}>
+              {% if location.id|string in filled.location_ids|map('string')|list %}checked{% endif %}>
             {{ location.name }}
             </label>
           {% endfor %}
