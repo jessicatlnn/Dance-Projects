@@ -3,38 +3,57 @@
 
 <head>
   <title>Tanssiprojektit</title>
+  <link rel="stylesheet" href="/static/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <h1>Tanssiprojektit</h1>
-  {% if session.username %}
-  <p>
-    Olet kirjautunut nimellä {{ session.username }}
-  </p>
-  {% endif %}
+  <div class="page">
+    <div class="header">
+      <h1>Tanssiprojektit</h1>
+    </div>
 
-  <p>
-    {% if session.user_id %}
-    <a href="/logout">Kirjaudu ulos</a>
-    {% else %}
-    <a href="/login">Kirjaudu sisään</a>
-    <a href="/register">Luo tunnus</a>
+    {% if session.username %}
+      <p>
+        Hei taas {{ session.username }}!
+      </p>
     {% endif %}
-  </p>
 
-  <p>
-    {% if session.user_id %}
-    <a href="/new_project">Uusi tanssiprojekti</a>
-    {% endif %}
-    <a href="/find_project">Etsi tanssiprojekti</a>
-  </p>
+    <div class="log">
+      <ul>
+        {% if session.user_id %}
+        <li><a href="/logout">Kirjaudu ulos</a></li>
+        {% else %}
+          <li><a href="/login">Kirjaudu sisään</a></li>
+          <li><a href="/register">Luo tunnus</a></li>
+        {% endif %}
+      </ul>
+    </div>
 
-  <h2>Tanssiprojektit</h2>
-  <ul>
-    {% for project in projects %}
-    <li><a href="/project/{{ project.id }}">{{ project.title }}</a></li>
-    {% endfor %}
-  </ul>
+    <div class="nav">
+      <nav>
+        <ul>
+          {% if session.user_id %}
+          <li><a href="/find_project">Etsi tanssiprojekti</a></li>
+          <li><a href="/new_project">Uusi tanssiprojekti</a></li>
+          {% else %}
+            <li><a href="/find_project">Etsi tanssiprojekti</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+
+    <div class="content">
+      <h2>Tanssiprojektit</h2>
+      <ul>
+        {% for project in projects %}
+          <li><a href="/project/{{ project.id }}">{{ project.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 </body>
 
 </html>
