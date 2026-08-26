@@ -63,6 +63,12 @@ CREATE TABLE project_locations (
 CREATE TABLE participants (
     id INTEGER PRIMARY KEY,
     project_id INTEGER REFERENCES projects(id),
+    user_id INTEGER REFERENCES users(id)
+);
+
+CREATE TABLE participation_requests (
+    id INTEGER PRIMARY KEY,
+    project_id INTEGER REFERENCES projects(id),
     user_id INTEGER REFERENCES users(id),
-    name TEXT
+    status TEXT
 );

@@ -36,20 +36,57 @@
   </p>
 
   <h2>Osallistujat</h2>
+
+  {% if participants | count == 1 %}
+    <p>{{ participants | count }} osallistuja.</p>
+  {% else %}
+    <p>{{ participants | count }} osallistujaa.</p>
+  {% endif %}
+
+  {% if session.user_id == project.user_id %}
+
     <ul>
       {% for participant in participants %}
-        <li><a href="/user/{{ participant.user_id }}">{{ participant.name }}</a></li>
+        <li>{{ participant }}</li>
       {% endfor %}
     </ul>
 
-  <h2>Osallistu projektiin</h2>
-    <form action="/new_participant" method="post">
-      Nimi:
-        <input type="text" name="participant_name" required />
-      Sukunimi:
-        <input type="text" name="participant_surname" required />
+    <h2>Osallistumispyynnöt</h2>
+      <ul>
+        {% for request in participation_requests %}
+          <li>{{ request.username }}</li>
+        {% endfor %}
+      </ul>
+
+  {% elif session.user_id %}
+
+      {% set ns = namespace(has_requested=false) %}
+
+      {% for request in participation_requests %}
+        {% if request.user_id == session.user_id %}
+          {% set ns.  has_requested = true %}
+        {% endif %}
+      {% endfor %}
+
+    {% if ns.has_requested %}
+      <p>Olet hakenut projektiin onnistuneesti! Odota, että sinut hyväksytään.</p>
+
+    {% else %}
+      <h2>Osallistu projektiin</h2>
+
+      <form action="/new_participant" method="post">
         <input type="hidden" name="project_id" value="{{ project.id }}"/>
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-        <input type="submit" value="Osallistu" />
-    </form>
+
+        <input type="submit" value="Osallistu projektiin" />
+      </form>
+    {% endif %}
+
+  {% else %}
+
+    <p>
+      <a href="/login">Kirjaudu sisään</a>, jotta voit osallistua projektiin.
+    </p>
+
+  {% endif %}
 {% endblock %}

@@ -73,8 +73,9 @@ def show_project(project_id):
 
     locations = projects.get_project_locations(project_id)
     participants = projects.get_participants(project_id)
+    participation_requests = projects.get_participation_requests(project_id)
 
-    return render_template("show_project.html", project=project, locations=locations, participants=participants)
+    return render_template("show_project.html", project=project, locations=locations, participants=participants, participation_requests=participation_requests)
 
 @app.route("/new_participant", methods=["POST"])
 def new_participant():
@@ -86,15 +87,12 @@ def new_participant():
     if not project:
         abort(404)
 
-    name = request.form["participant_name"].strip()
-    surname = request.form["participant_surname"].strip()
-    if not name or not surname:
-        abort(400)
-    full_name = name + " " + surname
-
     user_id = session["user_id"]
 
-    projects.add_participant(project_id, user_id, full_name)
+    if project["user_id"] == user_id:
+        abort(403)
+
+    projects.add_participation_request(project_id, user_id)
 
     return redirect("/project/" + str(project_id))
 

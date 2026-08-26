@@ -90,13 +90,22 @@ def get_locations():
              ORDER BY name = 'Muu', name"""
     return db.query(sql)
 
-def add_participant(project_id, user_id, full_name):
-    sql = """INSERT INTO participants (project_id, user_id, name) VALUES (?, ?, ?)"""
-    db.execute(sql, [project_id, user_id, full_name])
+def add_participation_request(project_id, user_id):
+    sql = """INSERT INTO participation_requests (project_id, user_id, status) VALUES (?, ?, ?)"""
+    db.execute(sql, [project_id, user_id, "pending"])
+
+def get_participation_requests(project_id):
+    sql = """SELECT participation_requests.id,
+             participation_requests.user_id,
+             users.username
+             FROM participation_requests
+             JOIN users ON participation_requests.user_id = users.id
+             WHERE participation_requests.project_id = ?
+             AND participation_requests.status = 'pending'"""
+    return db.query(sql, [project_id])
 
 def get_participants(project_id):
-    sql = """SELECT participants.name,
-                    users.id AS user_id,
+    sql = """SELECT users.id AS user_id,
                     users.username
              FROM participants, users
              WHERE participants.project_id = ?
@@ -104,5 +113,4 @@ def get_participants(project_id):
              ORDER BY participants.id"""
 
     result = db.query(sql, [project_id])
-    print("PARTICIPANT RESULT:", result)
     return result
