@@ -68,7 +68,7 @@ def remove_project(project_id):
 def find_projects(query):
     sql = """SELECT id, title
              FROM projects
-             WHERE title LIKE ? OR description LIKE ?
+             WHERE LOWER(title) LIKE ? OR LOWER(description) LIKE ?
              ORDER BY id DESC"""
     like = "%" + query + "%"
     return db.query(sql, [like, like])
