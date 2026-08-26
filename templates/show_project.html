@@ -38,23 +38,33 @@
   <h2>Osallistujat</h2>
 
   {% if participants | count == 1 %}
-    <p>{{ participants | count }} osallistuja.</p>
+    <p>{{ participants | count }} osallistuja</p>
   {% else %}
-    <p>{{ participants | count }} osallistujaa.</p>
+    <p>{{ participants | count }} osallistujaa</p>
   {% endif %}
 
   {% if session.user_id == project.user_id %}
 
     <ul>
       {% for participant in participants %}
-        <li>{{ participant }}</li>
+        <li>{{ participant.username }}</li>
       {% endfor %}
     </ul>
 
     <h2>Osallistumispyynnöt</h2>
       <ul>
         {% for request in participation_requests %}
-          <li>{{ request.username }}</li>
+          <li>
+            {{ request.username }}
+
+            <form action="/handle_request" method="post">
+              <input type="hidden" name="request_id" value="{{ request.id }}">
+              <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+              <input type="submit" name="action" value="Hyväksy">
+              <input type="submit" name="action" value="Hylkää">
+            </form>
+          </li>
         {% endfor %}
       </ul>
 
@@ -64,7 +74,7 @@
 
       {% for request in participation_requests %}
         {% if request.user_id == session.user_id %}
-          {% set ns.  has_requested = true %}
+          {% set ns.has_requested = true %}
         {% endif %}
       {% endfor %}
 

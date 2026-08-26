@@ -29,11 +29,9 @@ def check_csrf():
 def bad_request(e):
     return render_template("400.html"), 400
 
-
 @app.errorhandler(403)
 def forbidden(e):
     return render_template("403.html"), 403
-
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -73,7 +71,7 @@ def show_project(project_id):
 
     locations = projects.get_project_locations(project_id)
     participants = projects.get_participants(project_id)
-    participation_requests = projects.get_participation_requests(project_id)
+    participation_requests = projects.get_project_participation_requests(project_id)
 
     return render_template("show_project.html", project=project, locations=locations, participants=participants, participation_requests=participation_requests)
 
@@ -408,3 +406,32 @@ def logout():
         del session["username"]
         del session["csrf_token"]
     return redirect("/")
+
+@app.route("/handle_request", methods=["POST"])
+def handle_request():
+    require_login()
+    check_csrf()
+
+    request_id = request.form["request_id"]
+    action = request.form["action"]
+
+    participation_request = projects.get_participation_request(request_id)
+
+    if not participation_request:
+        abort(404)
+
+    project = projects.get_project(participation_request["project_id"])
+
+    if project["user_id"] != session["user_id"]:
+        abort(403)
+
+    if action == "Hyväksy":
+        projects.accept_participation_request(request_id)
+
+    elif action == "Hylkää":
+        projects.reject_participation_request(request_id)
+
+    else:
+        abort(400)
+
+    return redirect("/project/" + str(project["id"]))

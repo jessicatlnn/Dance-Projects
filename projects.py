@@ -90,19 +90,8 @@ def get_locations():
              ORDER BY name = 'Muu', name"""
     return db.query(sql)
 
-def add_participation_request(project_id, user_id):
-    sql = """INSERT INTO participation_requests (project_id, user_id, status) VALUES (?, ?, ?)"""
-    db.execute(sql, [project_id, user_id, "pending"])
 
-def get_participation_requests(project_id):
-    sql = """SELECT participation_requests.id,
-             participation_requests.user_id,
-             users.username
-             FROM participation_requests
-             JOIN users ON participation_requests.user_id = users.id
-             WHERE participation_requests.project_id = ?
-             AND participation_requests.status = 'pending'"""
-    return db.query(sql, [project_id])
+# PARTICIPATION
 
 def get_participants(project_id):
     sql = """SELECT users.id AS user_id,
@@ -114,3 +103,50 @@ def get_participants(project_id):
 
     result = db.query(sql, [project_id])
     return result
+
+def add_participation_request(project_id, user_id):
+    sql = """INSERT INTO participation_requests (project_id, user_id, status) VALUES (?, ?, ?)"""
+    db.execute(sql, [project_id, user_id, "pending"])
+
+def get_project_participation_requests(project_id):
+    sql = """SELECT participation_requests.id,
+             participation_requests.user_id,
+             users.username
+             FROM participation_requests
+             JOIN users ON participation_requests.user_id = users.id
+             WHERE participation_requests.project_id = ?
+             AND participation_requests.status = 'pending'"""
+    return db.query(sql, [project_id])
+
+def get_participation_request(request_id):
+    sql = """SELECT id, project_id, user_id, status
+             FROM participation_requests
+             WHERE id = ?"""
+
+    result = db.query(sql, [request_id])
+
+    if result:
+        return result[0]
+
+    return None
+
+def accept_participation_request(request_id):
+    participation_request = get_participation_request(request_id)
+
+    sql = """INSERT INTO participants (project_id, user_id)
+             VALUES (?, ?)"""
+
+    db.execute(sql, [participation_request["project_id"], participation_request["user_id"]])
+
+    sql = """UPDATE participation_requests
+             SET status = 'accepted'
+             WHERE id = ?"""
+
+    db.execute(sql, [request_id])
+
+def reject_participation_request(request_id):
+    sql = """UPDATE participation_requests
+             SET status = 'rejected'
+             WHERE id = ?"""
+
+    db.execute(sql, [request_id])
