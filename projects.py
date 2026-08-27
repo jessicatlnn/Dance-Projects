@@ -59,11 +59,18 @@ def update_project(project_id, title, description, dance_style_id, level_id, loc
         db.execute(sql, [project_id, location_id])
 
 def remove_project(project_id):
+    sql ="DELETE FROM participants WHERE project_id = ?"
+    db.execute(sql, [project_id])
+
+    sql ="DELETE FROM participation_requests WHERE project_id = ?"
+    db.execute(sql, [project_id])
+
     sql = "DELETE FROM project_locations WHERE project_id = ?"
     db.execute(sql, [project_id])
 
     sql = "DELETE FROM projects WHERE id = ?"
     db.execute(sql, [project_id])
+
 
 def find_projects(query):
     sql = """SELECT id, title
