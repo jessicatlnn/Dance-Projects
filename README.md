@@ -9,7 +9,7 @@
 - Käyttäjä pystyy etsimään tanssiprojekteja hakusanalla. Käyttäjä pystyy hakemaan sekä itse lisäämiään että muiden käyttäjien lisäämiä projekteja.
 - Sovelluksessa on käyttäjäsivut, jotka näyttävät jokaisesta käyttäjästä tilastoja (esim. projektien ja osallistujien määrät) ja käyttäjän lisäämät projektit.
 - Tanssiprojektille valitaan tanssityyli tietokantaan tallennetuista vaihtoehdoista (esim. Hip Hop, Commercial, Heels, Contemporary, Jazz tai Street), oma taitotaso ja projektin sijainnit. 
-- Käyttäjä voi osallistua sekä omiin että muiden käyttäjien projekteihin. Projektien sivuilla näkyvät osallistujat ja osallistujamäärät.
+- Käyttäjä voi osallistua sekä omiin että muiden käyttäjien projekteihin. Projektien sivuilla näkyvät osallistujamäärät.
 
 ## Sovelluksen asennus
 
