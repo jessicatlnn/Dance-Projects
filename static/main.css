@@ -16,6 +16,14 @@ body {
     color: rgb(32, 28, 28);
 }
 
+.description {
+    background-color: whitesmoke;
+    margin: 0.8em 0;
+    padding: 1.2em 2em;
+    border-left: 3px solid rgb(147, 116, 110);
+    white-space: pre-line;
+}
+
 .log {
     list-style: none;
     padding: 0;

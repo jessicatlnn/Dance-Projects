@@ -73,7 +73,11 @@ def show_project(project_id):
     participants = projects.get_participants(project_id)
     participation_requests = projects.get_project_participation_requests(project_id)
 
-    return render_template("show_project.html", project=project, locations=locations, participants=participants, participation_requests=participation_requests)
+    return render_template("show_project.html",
+                            project=project,
+                            locations=locations,
+                            participants=participants,
+                            participation_requests=participation_requests)
 
 @app.route("/new_participant", methods=["POST"])
 def new_participant():

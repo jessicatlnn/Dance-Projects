@@ -112,7 +112,9 @@ def get_participants(project_id):
     return result
 
 def add_participation_request(project_id, user_id):
-    sql = """INSERT INTO participation_requests (project_id, user_id, status) VALUES (?, ?, ?)"""
+    sql = """INSERT INTO participation_requests
+             (project_id, user_id, status)
+             VALUES (?, ?, ?)"""
     db.execute(sql, [project_id, user_id, "pending"])
 
 def get_project_participation_requests(project_id):
