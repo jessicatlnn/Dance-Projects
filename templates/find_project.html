@@ -7,21 +7,59 @@
 
     <form action="/find_project" method="get">
         <p>
-            Hakusana: <input type="text" name="query" value="{{ query }}">
+            Hakusana:
+            <input type="text" name="query" value="{{ query }}">
         </p>
-        <input type="submit" value="Etsi tanssiprojekti">
+
+        <p>
+            Tanssityyli:
+            <select name="dance_style">
+                <option value="">Kaikki</option>
+                {% for style in dance_styles %}
+                    <option value="{{ style.id }}"
+                        {% if selected_dance_style == style.id|string %}selected{% endif %}>
+                        {{ style.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            Taso:
+            <select name="level">
+                <option value="">Kaikki</option>
+                {% for level in levels %}
+                    <option value="{{ level.id }}"
+                        {% if selected_level == level.id|string %}selected{% endif %}>
+                        {{ level.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            Sijainti:
+            <select name="location">
+                <option value="">Kaikki</option>
+                {% for location in locations %}
+                    <option value="{{ location.id }}"
+                        {% if selected_location == location.id|string %}selected{% endif %}>
+                        {{ location.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <button type="submit">Hae</button>
     </form>
-    
-    <p>
-        <a href="/">Takaisin</a>
-    </p>
-    {% if query %}
-    <h2>Tulokset</h2>
-    
+
+    <h2 class="find-results">Tulokset</h2>
+
     <ul>
         {% for project in results %}
-        <li><a href="/project/{{ project.id }}">{{ project.title }}</a></li>
+            <li>
+                <a href="/project/{{ project.id }}">{{ project.title }}</a>
+            </li>
         {% endfor %}
     </ul>
-    {% endif %}
 {% endblock %}
