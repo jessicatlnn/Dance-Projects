@@ -71,14 +71,37 @@ def remove_project(project_id):
     sql = "DELETE FROM projects WHERE id = ?"
     db.execute(sql, [project_id])
 
-
-def find_projects(query):
-    sql = """SELECT id, title
+def find_projects(query, dance_style_id, level_id, location_id):
+    sql = """SELECT projects.id, projects.title
              FROM projects
-             WHERE LOWER(title) LIKE ? OR LOWER(description) LIKE ?
-             ORDER BY id DESC"""
-    like = "%" + query + "%"
-    return db.query(sql, [like, like])
+             WHERE 1=1"""
+    parameters = []
+
+    if query:
+        sql += """ AND (LOWER(projects.title) LIKE ?
+                      OR LOWER(projects.description) LIKE ?)"""
+        like = "%" + query.lower() + "%"
+        parameters.extend([like, like])
+
+    if dance_style_id:
+        sql += " AND projects.dance_style_id = ?"
+        parameters.append(dance_style_id)
+
+    if level_id:
+        sql += " AND projects.level_id = ?"
+        parameters.append(level_id)
+
+    if location_id:
+        sql += """ AND projects.id IN (
+                      SELECT project_id
+                      FROM project_locations
+                      WHERE location_id = ?
+                  )"""
+        parameters.append(location_id)
+
+    sql += " ORDER BY projects.id DESC"
+
+    return db.query(sql, parameters)
 
 def get_dance_styles():
     sql = """SELECT id, name

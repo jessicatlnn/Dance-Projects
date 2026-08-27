@@ -55,13 +55,31 @@ def show_user(user_id):
 
 @app.route("/find_project")
 def find_project():
-    query = request.args.get("query")
-    if query:
-        results = projects.find_projects(query)
-    else:
-        query = ""
-        results = []
-    return render_template("find_project.html", query=query, results=results)
+    query = request.args.get("query", "")
+    dance_style_id = request.args.get("dance_style", "")
+    level_id = request.args.get("level", "")
+    location_id = request.args.get("location", "")
+
+    results = projects.find_projects(
+        query,
+        dance_style_id,
+        level_id,
+        location_id)
+
+    dance_styles = projects.get_dance_styles()
+    levels = projects.get_levels()
+    locations = projects.get_locations()
+
+    return render_template(
+        "find_project.html",
+        query=query,
+        results=results,
+        dance_styles=dance_styles,
+        levels=levels,
+        locations=locations,
+        selected_dance_style=dance_style_id,
+        selected_level=level_id,
+        selected_location=location_id)
 
 @app.route("/project/<int:project_id>")
 def show_project(project_id):
