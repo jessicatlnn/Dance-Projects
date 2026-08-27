@@ -5,13 +5,27 @@
 {% block content %}
     <h2>Käyttäjä {{ user.username }}</h2>
 
-    <p>
-      {% if projects | count == 1 %}
-        Käyttäjällä on yhteensä {{ projects | count }} tanssiprojekti.
-      {% else %}
-        Käyttäjällä on yhteensä {{ projects | count }} tanssiprojektia.
-      {% endif %}
-    </p>
+    {% if session.user_id == user.id %}
+
+      <p>
+        {% if projects | count == 1 %}
+          Sinulla on yhteensä {{ projects | count }} tanssiprojekti.
+        {% else %}
+          Sinulla on yhteensä {{ projects | count }} tanssiprojektia.
+        {% endif %}
+      </p>
+
+    {% else %}
+
+      <p>
+        {% if projects | count == 1 %}
+          Käyttäjällä on yhteensä {{ projects | count }} tanssiprojekti.
+        {% else %}
+          Käyttäjällä on yhteensä {{ projects | count }} tanssiprojektia.
+        {% endif %}
+      </p>
+
+    {% endif %}
 
     <h2>Projektit</h2>
       <ul>
