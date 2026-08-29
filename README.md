@@ -39,3 +39,12 @@ $ flask run
 
 Sovellus löytyy osoitteesta:
 `http://127.0.0.1:5000/`
+
+
+## Suuren tietomäärän käsittely
+
+Sovellusta testattiin 10 000 projektilla ja testidataa luotiin seed.py-tiedoston avulla. Suuren tietomäärän käsittelyä varten projektien listauksessa käytetään sivutusta, jossa näytetään 10 projektia kerrallaan. Sivutus on käytössä sekä etusivulla että projektien hakutuloksissa.
+
+Tietokantaan lisättiin indeksit projektien tanssityylille, tasolle ja sijainnille. Indeksit nopeuttavat projektien hakua erityisesti suurilla tietomäärillä.
+
+Testauksessa sivutus ja projektien haku toimivat normaalisti 10 000 projektin tietomäärällä.
