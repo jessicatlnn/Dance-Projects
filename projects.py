@@ -14,7 +14,13 @@ def add_project(title, description, dance_style_id, level_id, location_ids, user
         db.execute(sql, [project_id, location_id])
 
 def get_projects():
-    sql = "SELECT id, title FROM projects ORDER BY id DESC"
+    sql = """SELECT projects.id,
+                    projects.title,
+                    projects.creation_date,
+                    users.username
+             FROM projects
+             JOIN users ON projects.user_id = users.id
+             ORDER BY projects.id DESC"""
     return db.query(sql)
 
 def get_project(project_id):
@@ -72,8 +78,9 @@ def remove_project(project_id):
     db.execute(sql, [project_id])
 
 def find_projects(query, dance_style_id, level_id, location_id):
-    sql = """SELECT projects.id, projects.title
+    sql = """SELECT projects.id, projects.title, projects.creation_date, users.username
              FROM projects
+             JOIN users ON projects.user_id = users.id
              WHERE 1=1"""
     parameters = []
 

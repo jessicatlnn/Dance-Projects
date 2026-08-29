@@ -55,11 +55,12 @@
 
     <h2 class="find-results">Tulokset</h2>
 
-    <ul>
+    <ul class="project-list">
         {% for project in results %}
-            <li>
-                <a href="/project/{{ project.id }}">{{ project.title }}</a>
+            <li class="project-content">
+                    <a href="/project/{{ project.id }}">{{ project.title }}</a>
+                    <p>{{ project.username }}, {{ project.creation_date }}</p>
             </li>
-        {% endfor %}
-    </ul>
+    {% endfor %}
+</ul>
 {% endblock %}

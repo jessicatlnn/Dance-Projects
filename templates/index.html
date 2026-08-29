@@ -7,9 +7,10 @@
 
     <ul>
         {% for project in projects %}
-            <li>
+            <div class="project-content">
                 <a href="/project/{{ project.id }}">{{ project.title }}</a>
-            </li>
+                <p>{{ project.username }}, {{ project.creation_date }}</p>
+            </div>
         {% endfor %}
     </ul>
 {% endblock %}

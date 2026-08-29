@@ -49,6 +49,7 @@ CREATE TABLE projects (
     id INTEGER PRIMARY KEY,
     title TEXT,
     description TEXT,
+    creation_date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     dance_style_id INTEGER REFERENCES dance_styles(id),
     level_id INTEGER REFERENCES levels(id),
     user_id INTEGER REFERENCES users

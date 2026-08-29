@@ -25,10 +25,10 @@
         <div class="log">
         <ul>
             {% if session.user_id %}
-            <li><a href="/logout">Kirjaudu ulos</a></li>
+                <li><a href="/logout">Kirjaudu ulos</a></li>
             {% else %}
-            <li><a href="/login">Kirjaudu sisään</a></li>
-            <li><a href="/register">Luo tunnus</a></li>
+                <li><a href="/login">Kirjaudu sisään</a></li>
+                <li><a href="/register">Luo tunnus</a></li>
             {% endif %}
         </ul>
     </div>
@@ -36,11 +36,11 @@
     <div class="nav">
         <nav>
             <ul>
-                {% if session.user_id %}
-            <li><a href="/">Etusivu</a></li>
-            <li><a href="/find_project">Etsi tanssiprojekti</a></li>
-            <li><a href="/new_project">Luo tanssiprojekti</a></li>
-            <li><a href="/user/{{ session.user_id }}">Oma profiili</a></li>
+            {% if session.user_id %}
+                <li><a href="/">Etusivu</a></li>
+                <li><a href="/find_project">Etsi tanssiprojekti</a></li>
+                <li><a href="/new_project">Luo tanssiprojekti</a></li>
+                <li><a href="/user/{{ session.user_id }}">Oma profiili</a></li>
             {% else %}
                 <li><a href="/">Etusivu</a></li>
                 <li><a href="/find_project">Etsi tanssiprojekti</a></li>
