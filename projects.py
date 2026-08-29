@@ -13,16 +13,6 @@ def add_project(title, description, dance_style_id, level_id, location_ids, user
                  VALUES (?, ?)"""
         db.execute(sql, [project_id, location_id])
 
-def get_projects():
-    sql = """SELECT projects.id,
-                    projects.title,
-                    projects.creation_date,
-                    users.username
-             FROM projects
-             JOIN users ON projects.user_id = users.id
-             ORDER BY projects.id DESC"""
-    return db.query(sql)
-
 def get_project(project_id):
     sql = """SELECT projects.id,
                     projects.title,
@@ -55,6 +45,13 @@ def get_projects(page):
              LIMIT ? OFFSET ?"""
 
     return db.query(sql, [projects_per_page, offset])
+
+def get_project_locations(project_id):
+    sql = """SELECT locations.id, locations.name
+             FROM project_locations
+             JOIN locations ON project_locations.location_id = locations.id
+             WHERE project_locations.project_id = ?"""
+    return db.query(sql, [project_id])
 
 def update_project(project_id, title, description, dance_style_id, level_id, location_ids):
     sql = """UPDATE projects SET title = ?,

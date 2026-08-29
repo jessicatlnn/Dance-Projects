@@ -14,51 +14,50 @@
       {% endfor %}
 
       <p>
-        Projektin nimi: <br />
-        <input type="text" name="title" value="{{ filled.title }}" maxlength="50" required />
-        <br />
+        <label for="title">Projektin nimi:</label>
+        <input type="text" id="title" name="title" value="{{ filled.title }}" maxlength="50" required />
         Vähintään 3 merkkiä.
       </p>
       <p>
-        Kuvaus: <br />
-        <textarea name="description" rows="8" cols="60" maxlength="1000" required>{{ filled.description }}</textarea>
-        <br />
+        <label for="description">Kuvaus:</label>
+        <textarea id="description" name="description">{{ filled.description }}</textarea>
         Vähintään 3 merkkiä.
       </p>
       <p>
-        Tanssityyli: <br />
-        <select name="dance_style" required>
+        <label for="dance_style">Tanssityyli:</label>
+        <select id="dance_style" name="dance_style" required>
           <option value="" disabled {% if not dance_style_id %}selected{% endif %}>(valitse)</option>
           {% for style in dance_styles %}
             <option value="{{ style.id }}"
               {% if style.id|string == filled.dance_style_id|string %}selected{% endif %}>
               {{ style.name }}
-          </option>
+            </option>
           {% endfor %}
         </select>
       </p>
       <p>
-        Taso: <br />
-        <select name="level" required>
+        <label for="level">Taso:</label>
+        <select id="level" name="level" required>
           <option value="" disabled {% if not level_id %}selected{% endif %}>(valitse)</option>
           {% for level in levels %}
             <option value="{{ level.id }}"
               {% if level.id|string == filled.level_id|string %}selected{% endif %}>
               {{ level.name }}
-          </option>
+            </option>
           {% endfor %}
         </select>
       </p>
       <p>
-        Sijainti: <br />
-          {% for location in locations %}
-            <label>
-              <input type="checkbox" name="locations" value="{{ location.id }}"
+        Sijainti:<br />
+        {% for location in locations %}
+          <label>
+            <input type="checkbox" name="locations" value="{{ location.id }}"
               {% if location.id|string in filled.location_ids|map('string')|list %}checked{% endif %}>
             {{ location.name }}
-            </label>
-          {% endfor %}
+          </label>
+        {% endfor %}
       </p>
+      
       <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
       <input type="submit" value="Luo tanssiprojekti" />
 

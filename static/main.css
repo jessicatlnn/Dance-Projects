@@ -20,6 +20,13 @@ body {
     color: rgb(32, 28, 28);
 }
 
+textarea {
+    width: 100%;
+    height: 200px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
 .description {
     background-color: rgb(239, 244, 240);
     margin: 0.8em 0;
