@@ -1,3 +1,6 @@
+# Pylint-raportti
+
+```text
 ************* Module app
 app.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 app.py:15:0: C0116: Missing function or method docstring (missing-function-docstring)
@@ -26,4 +29,21 @@ app.py:431:0: C0116: Missing function or method docstring (missing-function-docs
 
 ------------------------------------------------------------------
 Your code has been rated at 8.97/10 (previous run: 8.97/10, +0.00)
+```
 
+## Docstring ilmoitukset
+
+Suurin osa raportin ilmoituksista on seuraavanlaisia:
+```
+app.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+app.py:49:0: C0116: Missing function or method docstring (missing-function-docstring)
+```
+Tämä tarkoittaa, että funktioissa tai moduuleissa ei ole docstring-kommentteja. Sovelluksen kehityksessä on tehty päätös siitä, että ei käytetä docstring-kommentteja.
+
+## Unused argument ilmoitukset
+
+Raporteissa on muutama
+```
+app.py:33:14: W0613: Unused argument 'e' (unused-argument)
+```
+tyyppinen ilmoitus. Parametri tarvitaan Flaskin virheenkäsittelyssä, vaikka sen arvoa ei tässä sovelluksessa käytetä.
