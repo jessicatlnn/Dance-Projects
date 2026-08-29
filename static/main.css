@@ -4,6 +4,10 @@ body {
     background-color: rgb(235, 206, 200);
 }
 
+.pages {
+    /* tyylit tähän */
+}
+
 .page {
     max-width: 900px;
     min-height: calc(100vh - 60px);

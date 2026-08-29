@@ -73,3 +73,12 @@ CREATE TABLE participation_requests (
     user_id INTEGER REFERENCES users(id),
     status TEXT
 );
+
+CREATE INDEX idx_projects_dance_style
+ON projects(dance_style_id);
+
+CREATE INDEX idx_projects_level
+ON projects(level_id);
+
+CREATE INDEX idx_project_locations_location
+ON project_locations(location_id);

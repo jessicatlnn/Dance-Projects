@@ -42,8 +42,9 @@ def page_not_found(e):
 
 @app.route("/")
 def index():
-    all_projects = projects.get_projects()
-    return render_template("index.html", projects=all_projects)
+    page = int(request.args.get("page", 1))
+    all_projects = projects.get_projects(page)
+    return render_template("index.html", projects=all_projects, page=page)
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
@@ -59,12 +60,14 @@ def find_project():
     dance_style_id = request.args.get("dance_style", "")
     level_id = request.args.get("level", "")
     location_id = request.args.get("location", "")
+    page = int(request.args.get("page", 1))
 
     results = projects.find_projects(
         query,
         dance_style_id,
         level_id,
-        location_id)
+        location_id,
+        page)
 
     dance_styles = projects.get_dance_styles()
     levels = projects.get_levels()
@@ -79,7 +82,8 @@ def find_project():
         locations=locations,
         selected_dance_style=dance_style_id,
         selected_level=level_id,
-        selected_location=location_id)
+        selected_location=location_id,
+        page=page)
 
 @app.route("/project/<int:project_id>")
 def show_project(project_id):

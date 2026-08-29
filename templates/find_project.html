@@ -62,5 +62,21 @@
                     <p>{{ project.username }}, {{ project.creation_date }}</p>
             </li>
     {% endfor %}
-</ul>
+    </ul>
+
+    <div class="pages">
+
+        {% if page > 1 %}
+            <a href="/find_project?query={{ query }}&dance_style={{ selected_dance_style }}&level={{ selected_level }}&location={{ selected_location }}&page={{ page - 1 }}">
+                Edellinen
+            </a>
+        {% endif %}
+
+        {% if results|length == 10 %}
+            <a href="/find_project?query={{ query }}&dance_style={{ selected_dance_style }}&level={{ selected_level }}&location={{ selected_location }}&page={{ page + 1 }}">
+                Seuraava
+            </a>
+        {% endif %}
+
+    </div>
 {% endblock %}

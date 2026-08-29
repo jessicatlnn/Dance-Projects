@@ -13,4 +13,14 @@
             </div>
         {% endfor %}
     </ul>
+
+    <div class="pages">
+        {% if page > 1 %}
+            <a href="/?page={{ page - 1 }}">Edellinen</a>
+        {% endif %}
+
+        {% if projects|length == 10 %}
+            <a href="/?page={{ page + 1 }}">Seuraava</a>
+        {% endif %}
+    </div>
 {% endblock %}

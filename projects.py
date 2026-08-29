@@ -41,12 +41,20 @@ def get_project(project_id):
     result = db.query(sql, [project_id])
     return result[0] if result else None
 
-def get_project_locations(project_id):
-    sql = """SELECT locations.id, locations.name
-             FROM project_locations
-             JOIN locations ON project_locations.location_id = locations.id
-             WHERE project_locations.project_id = ?"""
-    return db.query(sql, [project_id])
+def get_projects(page):
+    projects_per_page = 10
+    offset = (page - 1) * projects_per_page
+
+    sql = """SELECT projects.id,
+                    projects.title,
+                    projects.creation_date,
+                    users.username
+             FROM projects
+             JOIN users ON projects.user_id = users.id
+             ORDER BY projects.id DESC
+             LIMIT ? OFFSET ?"""
+
+    return db.query(sql, [projects_per_page, offset])
 
 def update_project(project_id, title, description, dance_style_id, level_id, location_ids):
     sql = """UPDATE projects SET title = ?,
@@ -77,7 +85,10 @@ def remove_project(project_id):
     sql = "DELETE FROM projects WHERE id = ?"
     db.execute(sql, [project_id])
 
-def find_projects(query, dance_style_id, level_id, location_id):
+def find_projects(query, dance_style_id, level_id, location_id, page):
+    projects_per_page = 10
+    offset = (page - 1) * projects_per_page
+
     sql = """SELECT projects.id, projects.title, projects.creation_date, users.username
              FROM projects
              JOIN users ON projects.user_id = users.id
@@ -106,7 +117,8 @@ def find_projects(query, dance_style_id, level_id, location_id):
                   )"""
         parameters.append(location_id)
 
-    sql += " ORDER BY projects.id DESC"
+    sql += " ORDER BY projects.id DESC LIMIT ? OFFSET ?"
+    parameters.extend([projects_per_page, offset])
 
     return db.query(sql, parameters)
 
