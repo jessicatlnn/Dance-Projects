@@ -50,8 +50,8 @@ def show_user(user_id):
     user = users.get_user(user_id)
     if not user:
         abort(404)
-    projects = users.get_projects(user_id)
-    return render_template("show_user.html", user=user, projects=projects)
+    user_projects = users.get_projects(user_id)
+    return render_template("show_user.html", user=user, projects=user_projects)
 
 @app.route("/find_project")
 def find_project():
@@ -314,7 +314,6 @@ def update_project():
 def remove_project(project_id):
     require_login()
 
-
     project = projects.get_project(project_id)
     if not project:
         abort(404)
@@ -324,13 +323,13 @@ def remove_project(project_id):
     if request.method == "GET":
         return render_template("remove_project.html", project=project)
 
-    if request.method == "POST":
-        check_csrf()
-        if "remove" in request.form:
-            projects.remove_project(project_id)
-            return redirect("/")
-        else:
-            return redirect("/project/" + str(project_id))
+    check_csrf()
+
+    if "remove" in request.form:
+        projects.remove_project(project_id)
+        return redirect("/")
+
+    return redirect("/project/" + str(project_id))
 
 @app.route("/register")
 def register():
@@ -402,24 +401,23 @@ def login():
             "username": ""}
         return render_template("login.html", filled=filled)
 
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+    username = request.form["username"]
+    password = request.form["password"]
 
-        user_id = users.check_login(username, password)
+    user_id = users.check_login(username, password)
 
-        if user_id:
-            session["user_id"] = user_id
-            session["username"] = username
-            session["csrf_token"] = secrets.token_hex(16)
-            return redirect("/")
-        else:
-            flash("Väärä käyttäjätunnus tai salasana")
+    if user_id:
+        session["user_id"] = user_id
+        session["username"] = username
+        session["csrf_token"] = secrets.token_hex(16)
+        return redirect("/")
 
-            filled = {
-                "username": username}
+    flash("Väärä käyttäjätunnus tai salasana")
 
-            return render_template("login.html", filled=filled)
+    filled = {
+        "username": username}
+
+    return render_template("login.html", filled=filled)
 
 @app.route("/logout")
 def logout():
